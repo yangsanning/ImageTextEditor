@@ -1,0 +1,70 @@
+package ysn.com.editor.imagetexteditor;
+
+import android.text.Layout;
+import android.text.Selection;
+import android.text.Spannable;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.MotionEvent;
+import android.widget.TextView;
+
+/**
+ * @Author yangsanning
+ * @ClassName ClickableMovementMethod
+ * @Description 为ImageSpans点击而生
+ * @Date 2020/2/25
+ * @History 2020/2/25 author: description:
+ */
+public class ClickableMovementMethod extends LinkMovementMethod {
+
+    private static ClickableMovementMethod sInstance;
+
+    public static ClickableMovementMethod getInstance() {
+        if (sInstance == null) {
+            sInstance = new ClickableMovementMethod();
+        }
+        return sInstance;
+    }
+
+    @Override
+    public boolean onTouchEvent(TextView textView, Spannable buffer, MotionEvent event) {
+        int action = event.getAction();
+
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+
+            x -= textView.getTotalPaddingLeft();
+            y -= textView.getTotalPaddingTop();
+
+            x += textView.getScrollX();
+            y += textView.getScrollY();
+
+            Layout layout = textView.getLayout();
+            int line = layout.getLineForVertical(y);
+            int off = layout.getOffsetForHorizontal(line, x);
+
+            ClickableSpan[] clickableSpans = buffer.getSpans(off, off, ClickableSpan.class);
+            CloseImageSpan[] imageSpans = buffer.getSpans(off, off, CloseImageSpan.class);
+
+            if (clickableSpans.length != 0) {
+                if (action == MotionEvent.ACTION_UP) {
+                    clickableSpans[0].onClick(textView);
+                } else {
+                    Selection.setSelection(buffer, buffer.getSpanStart(clickableSpans[0]), buffer.getSpanEnd(clickableSpans[0]));
+                }
+                return true;
+            } else if (imageSpans.length != 0) {
+                if (action == MotionEvent.ACTION_UP) {
+                    imageSpans[0].onClick(textView, x, y);
+                } else {
+                    Selection.setSelection(buffer, buffer.getSpanStart(imageSpans[0]), buffer.getSpanEnd(imageSpans[0]));
+                }
+                return true;
+            } else {
+                Selection.removeSelection(buffer);
+            }
+        }
+        return false;
+    }
+}
