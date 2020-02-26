@@ -1,4 +1,4 @@
-package ysn.com.demo.imagetexteditor.utils;
+package ysn.com.editor.imagetexteditor.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

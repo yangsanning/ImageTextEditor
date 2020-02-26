@@ -61,7 +61,7 @@ public class CloseImageSpan extends ImageSpan {
             return;
         }
 
-        if (closeRect.contains(x, y)) {
+        if (closeRect != null && closeRect.contains(x, y)) {
             onCloseImageSpanClickListener.onClose();
         } else {
             onCloseImageSpanClickListener.onImageClick();
