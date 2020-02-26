@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.text.style.ImageSpan;
 import android.view.View;
 
+import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
+
 /**
  * @Author yangsanning
  * @ClassName CloseImageSpan
@@ -75,21 +77,5 @@ public class CloseImageSpan extends ImageSpan {
      */
     public void setOnCloseImageSpanClickListener(OnCloseImageSpanClickListener onCloseImageSpanClickListener) {
         this.onCloseImageSpanClickListener = onCloseImageSpanClickListener;
-    }
-
-    /**
-     * 点击事件回调
-     */
-    public interface OnCloseImageSpanClickListener {
-
-        /**
-         * 点击图片
-         */
-        void onImageClick();
-
-        /**
-         * 点击关闭按钮
-         */
-        void onClose();
     }
 }

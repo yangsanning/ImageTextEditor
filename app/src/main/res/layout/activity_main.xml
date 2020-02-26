@@ -10,17 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@android:color/white"
         android:fillViewport="true">
 
         <ysn.com.editor.imagetexteditor.EditorEditView
             android:id="@+id/main_activity_text"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@android:color/white"
+            android:layout_height="match_parent"
+            android:background="@null"
             android:gravity="start"
-            android:padding="0dp"
-            android:text="Hello World!" />
+            android:padding="8dp" />
     </android.support.v4.widget.NestedScrollView>
 
     <LinearLayout

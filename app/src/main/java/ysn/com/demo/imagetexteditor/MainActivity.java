@@ -21,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         editorEditView = findViewById(R.id.main_activity_text);
-        editorEditView.setMovementMethod(new ClickableMovementMethod());
-
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

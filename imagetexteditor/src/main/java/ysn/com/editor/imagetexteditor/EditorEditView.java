@@ -9,6 +9,7 @@ import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.widget.Toast;
 
+import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 
 /**
@@ -19,6 +20,11 @@ import ysn.com.editor.imagetexteditor.utils.ImageUtils;
  * @History 2020/2/26 author: description:
  */
 public class EditorEditView extends EditTextWithScrollView {
+
+    private static final String STRING_LINE_FEED = "\n";
+
+    private int selStart, selEnd;
+    private ClickableMovementMethod clickableMovementMethod;
 
     public EditorEditView(Context context) {
         super(context);
@@ -32,9 +38,16 @@ public class EditorEditView extends EditTextWithScrollView {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    protected void onSelectionChanged(int selStart, int selEnd) {
+        this.selStart = selStart;
+        this.selEnd = selEnd;
+        super.onSelectionChanged(selStart, selEnd);
+    }
+
     public void addImage(Drawable drawable) {
         Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.editor_ic_close), 60, 60);
-        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, new CloseImageSpan.OnCloseImageSpanClickListener() {
+        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, new OnCloseImageSpanClickListener() {
             @Override
             public void onImageClick() {
                 Toast.makeText(getContext(), "点击图片", Toast.LENGTH_SHORT).show();
@@ -46,8 +59,27 @@ public class EditorEditView extends EditTextWithScrollView {
             }
         });
         SpannableStringBuilder style = new SpannableStringBuilder(getText());
-        style.setSpan(imageSpan, style.length() - 1, style.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-        style.insert(style.length(), "\n ");
+        boolean isNeedLineFeed = selStart != 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
+        style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
+        int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
+        int end = start + 1;
+        style.insert(start, "*");
+        style.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        style.insert(end, STRING_LINE_FEED);
         setText(style);
+        setSelection(getSpanEnd(imageSpan) + 1);
+
+        setMovementMethod();
+    }
+
+    private int getSpanEnd(ImageSpan span) {
+        return getText().getSpanEnd(span);
+    }
+
+    private void setMovementMethod() {
+        if (clickableMovementMethod==null) {
+            clickableMovementMethod = new ClickableMovementMethod();
+        }
+        setMovementMethod(clickableMovementMethod);
     }
 }
