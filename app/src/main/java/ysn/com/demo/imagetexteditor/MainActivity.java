@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 // 获取图片
                 Drawable drawable = getResources().getDrawable(R.drawable.image);
                 // 设置固有宽高
-                drawable.setBounds(0, 0, DeviceUtils.getScreenWidth(MainActivity.this), 150);
+                drawable.setBounds(0, 0, DeviceUtils.getScreenWidth(MainActivity.this), 600);
                 editorEditView.addImage(drawable);
             }
         });

@@ -63,14 +63,21 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         if (imageSpans.length > 0) {
             lastImageSpan = imageSpans[0];
             lastImageSpan.setSelect(Boolean.TRUE);
+            replaceImage(selStart, selEnd, text);
         } else if (lastImageSpan != null) {
             lastImageSpan.setSelect(Boolean.FALSE);
+            replaceImage(selStart, selEnd, text);
             lastImageSpan = null;
         }
-
-        Log.d("test", "selStart: " + selStart);
-
         super.onSelectionChanged(selStart, selEnd);
+    }
+
+    private void replaceImage(int selStart, int selEnd, Editable text) {
+        int spanStart = getSpanStart(text, lastImageSpan);
+        int spanEnd = getSpanEnd(text, lastImageSpan);
+        if (selStart >= 0 || selEnd >= 0) {
+            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
     }
 
     @Override
@@ -115,25 +122,35 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
      */
     @Override
     public void onClose(final CloseImageSpan closeImageSpan) {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                SpannableStringBuilder style = getStyle();
-                int spanEnd = style.getSpanEnd(closeImageSpan);
-                style.removeSpan(closeImageSpan);
-                style.replace(spanEnd - 1, spanEnd, "");
-                setText(style);
-                setSelection(Math.min(spanEnd, style.length()));
-            }
-        });
+        Log.d("test", "onClose" );
+
+        lastImageSpan = null;
+        Editable text = getText();
+        int spanEnd = getSpanEnd(text, closeImageSpan);
+        text.removeSpan(closeImageSpan);
+        text.replace(spanEnd - 1, spanEnd, "");
+        setText(text);
+        setSelection(Math.min(spanEnd, text.length()));
     }
 
     private SpannableStringBuilder getStyle() {
         return new SpannableStringBuilder(getText());
     }
 
+    private int getSpanStart(ImageSpan span) {
+        return getSpanStart(getText(), span);
+    }
+
+    private int getSpanStart(Editable text, ImageSpan span) {
+        return text.getSpanStart(span);
+    }
+
     private int getSpanEnd(ImageSpan span) {
-        return getText().getSpanEnd(span);
+        return getSpanEnd(getText(), span);
+    }
+
+    private int getSpanEnd(Editable text, ImageSpan span) {
+        return text.getSpanEnd(span);
     }
 
     private void setMovementMethod() {
