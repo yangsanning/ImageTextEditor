@@ -13,13 +13,12 @@
         android:background="@android:color/white"
         android:fillViewport="true">
 
-        <ysn.com.editor.imagetexteditor.EditorEditView
+        <ysn.com.editor.imagetexteditor.EditorEditText
             android:id="@+id/main_activity_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
-            android:gravity="start"
-            android:padding="8dp" />
+            android:gravity="start" />
     </android.support.v4.widget.NestedScrollView>
 
     <LinearLayout

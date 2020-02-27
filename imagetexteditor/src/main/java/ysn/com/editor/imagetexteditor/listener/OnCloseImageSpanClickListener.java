@@ -1,5 +1,7 @@
 package ysn.com.editor.imagetexteditor.listener;
 
+import ysn.com.editor.imagetexteditor.CloseImageSpan;
+
 /**
  * @Author yangsanning
  * @ClassName OnCloseImageSpanClickListener
@@ -16,6 +18,7 @@ public interface OnCloseImageSpanClickListener {
 
     /**
      * 点击关闭按钮
+     * @param closeImageSpan
      */
-    void onClose();
+    void onClose(CloseImageSpan closeImageSpan);
 }

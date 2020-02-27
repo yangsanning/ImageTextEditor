@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.View;
 
 import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
@@ -20,6 +21,9 @@ import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
 public class CloseImageSpan extends ImageSpan {
 
     private static final float padding = 30;
+
+    private boolean isInit;
+    private boolean isSelect;
 
     private Bitmap closeBitmap;
     private Rect closeRect;
@@ -44,19 +48,25 @@ public class CloseImageSpan extends ImageSpan {
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
         super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+        if (isInit && isSelect) {
+            Rect drawableRect = getDrawable().getBounds();
+            float closeBitmapLeft = x + drawableRect.right - closeBitmap.getWidth() - padding;
+            float closeBitmapTop = y - drawableRect.bottom + padding;
 
-        Rect drawableRect = getDrawable().getBounds();
-        float closeBitmapLeft = x + drawableRect.right - closeBitmap.getWidth() - padding;
-        float closeBitmapTop = y - drawableRect.bottom + padding;
+            closeRect = new Rect((int) closeBitmapLeft, (int) closeBitmapTop,
+                    ((int) closeBitmapLeft + closeBitmap.getWidth()), ((int) closeBitmapTop + closeBitmap.getHeight()));
 
-        closeRect = new Rect((int) closeBitmapLeft, (int) closeBitmapTop,
-                ((int) closeBitmapLeft + closeBitmap.getWidth()), ((int) closeBitmapTop + closeBitmap.getHeight()));
-
-        canvas.drawBitmap(closeBitmap, closeBitmapLeft, closeBitmapTop, paint);
+            canvas.drawBitmap(closeBitmap, closeBitmapLeft, closeBitmapTop, paint);
+        } else {
+            closeRect = null;
+        }
+        isInit = true;
+        Log.d("test", "draw");
     }
 
     /**
      * 提供给{@link ClickableMovementMethod}使用的点击事件
+     * 这里进行不同点击事件的回调处理
      */
     public void onClick(View view, int x, int y) {
         if (onCloseImageSpanClickListener == null) {
@@ -64,10 +74,14 @@ public class CloseImageSpan extends ImageSpan {
         }
 
         if (closeRect != null && closeRect.contains(x, y)) {
-            onCloseImageSpanClickListener.onClose();
+            onCloseImageSpanClickListener.onClose(this);
         } else {
             onCloseImageSpanClickListener.onImageClick();
         }
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
     }
 
     /**

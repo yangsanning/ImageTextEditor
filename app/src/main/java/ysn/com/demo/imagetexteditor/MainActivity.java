@@ -6,13 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
-import ysn.com.editor.imagetexteditor.ClickableMovementMethod;
-import ysn.com.editor.imagetexteditor.EditorEditView;
+import ysn.com.editor.imagetexteditor.EditorEditText;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditorEditView editorEditView;
+    private EditorEditText editorEditView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 // 获取图片
                 Drawable drawable = getResources().getDrawable(R.drawable.image);
                 // 设置固有宽高
-                drawable.setBounds(0, 0, DeviceUtils.getScreenWidth(MainActivity.this), 700);
+                drawable.setBounds(0, 0, DeviceUtils.getScreenWidth(MainActivity.this), 150);
                 editorEditView.addImage(drawable);
             }
         });
