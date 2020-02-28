@@ -68,16 +68,19 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         if (imageSpans.length > 0) {
             lastImageSpan = imageSpans[0];
             lastImageSpan.setSelect(Boolean.TRUE);
-            replaceImage(selStart, selEnd, text);
+            updateImageSpan(selStart, selEnd, text);
         } else if (lastImageSpan != null) {
             lastImageSpan.setSelect(Boolean.FALSE);
-            replaceImage(selStart, selEnd, text);
+            updateImageSpan(selStart, selEnd, text);
             lastImageSpan = null;
         }
         super.onSelectionChanged(selStart, selEnd);
     }
 
-    private void replaceImage(int selStart, int selEnd, Editable text) {
+    /**
+     * 切换imageSpan
+     */
+    private void updateImageSpan(int selStart, int selEnd, Editable text) {
         int spanStart = getSpanStart(text, lastImageSpan);
         int spanEnd = getSpanEnd(text, lastImageSpan);
         if (selStart >= 0 || selEnd >= 0) {
@@ -149,10 +152,28 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
      */
     @Override
     public void onImageUp(CloseImageSpan imageSpan) {
+        resetLastImageSpan();
         lastImageSpan = imageSpan;
         lastImageSpan.setSelect(Boolean.TRUE);
-        replaceImage(selStart, selEnd, getText());
+        updateImageSpan(selStart, selEnd, getText());
         hideSoftInput();
+    }
+
+    /**
+     * 重置lastImageSpan
+     */
+    private void resetLastImageSpan() {
+        if (lastImageSpan == null) {
+            return;
+        }
+        Editable text = getText();
+        int spanStart = getSpanStart(text, lastImageSpan);
+        int spanEnd = getSpanEnd(text, lastImageSpan);
+        if (spanStart >= 0 || spanEnd >= 0) {
+            lastImageSpan.setSelect(Boolean.FALSE);
+            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            lastImageSpan = null;
+        }
     }
 
     /**
