@@ -8,13 +8,17 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Toast;
+import android.view.MotionEvent;
+import android.widget.EditText;
 
+import java.lang.reflect.Method;
+
+import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
+import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
+import ysn.com.editor.imagetexteditor.utils.LogUtils;
 
 /**
  * @Author yangsanning
@@ -28,7 +32,6 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
     private static final String STRING_LINE_FEED = "\n";
 
     private int selStart, selEnd;
-    private ClickableMovementMethod clickableMovementMethod;
     private CloseImageSpan lastImageSpan;
 
     public EditorEditText(Context context) {
@@ -57,6 +60,8 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
     protected void onSelectionChanged(int selStart, int selEnd) {
         this.selStart = selStart;
         this.selEnd = selEnd;
+
+        LogUtils.d("onSelectionChanged " + " selStart: " + selStart);
 
         Editable text = getText();
         CloseImageSpan[] imageSpans = text.getSpans(selStart - 1, selStart, CloseImageSpan.class);
@@ -92,38 +97,79 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         return super.dispatchKeyEvent(event);
     }
 
-    public void addImage(Drawable drawable) {
-        Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.editor_ic_close), 60, 60);
-        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, this);
-        SpannableStringBuilder style = getStyle();
-        boolean isNeedLineFeed = selStart != 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
-        style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
-        int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
-        int end = start + 1;
-        style.insert(start, "*");
-        style.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-        style.insert(end, STRING_LINE_FEED);
-        setText(style);
-        setSelection(getSpanEnd(imageSpan) + 1);
-
-        setMovementMethod();
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                enableFocusable();
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            default:
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     /**
-     * {@link CloseImageSpan#onClick(View, int, int)}的点击图片回调
+     * 启用焦点
+     */
+    private void enableFocusable() {
+        setFocusable(bTrue());
+        setFocusableInTouchMode(bTrue());
+        setCursorVisible(bTrue());
+        setInputVisible(bTrue());
+    }
+
+    /**
+     * 显示光标时是否弹起键盘
+     */
+    private void setInputVisible(Boolean visible) {
+        Class<EditText> cls = EditText.class;
+        Method method;
+        try {
+            method = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
+            method.setAccessible(true);
+            method.invoke(this, visible);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+    }
+
+    /**
+     * 点击{@link CloseImageSpan}图片-按下
      */
     @Override
-    public void onImageClick() {
-        Toast.makeText(getContext(), "点击图片", Toast.LENGTH_SHORT).show();
+    public void onImageDown(CloseImageSpan imageSpan) {
+        setInputVisible(bFalse());
     }
 
     /**
-     * {@link CloseImageSpan#onClick(View, int, int)}的点击关闭按钮回调
+     * 点击{@link CloseImageSpan}图片-抬起
+     */
+    @Override
+    public void onImageUp(CloseImageSpan imageSpan) {
+        lastImageSpan = imageSpan;
+        lastImageSpan.setSelect(Boolean.TRUE);
+        replaceImage(selStart, selEnd, getText());
+        hideSoftInput();
+    }
+
+    /**
+     * 隐藏键盘并禁用焦点
+     */
+    private void hideSoftInput() {
+        setFocusable(bFalse());
+        setFocusableInTouchMode(bFalse());
+        setCursorVisible(bFalse());
+        DeviceUtils.hideSoftInput(getContext(), this);
+    }
+
+    /**
+     * 点击{@link CloseImageSpan}关闭按钮
      */
     @Override
     public void onClose(final CloseImageSpan closeImageSpan) {
-        Log.d("test", "onClose" );
-
         lastImageSpan = null;
         Editable text = getText();
         int spanEnd = getSpanEnd(text, closeImageSpan);
@@ -153,10 +199,28 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         return text.getSpanEnd(span);
     }
 
-    private void setMovementMethod() {
-        if (clickableMovementMethod == null) {
-            clickableMovementMethod = new ClickableMovementMethod();
-        }
-        setMovementMethod(clickableMovementMethod);
+    private boolean bFalse() {
+        return Boolean.FALSE;
+    }
+
+    private boolean bTrue() {
+        return Boolean.TRUE;
+    }
+
+    public void addImage(Drawable drawable) {
+        Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.editor_ic_close), 60, 60);
+        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, this);
+        SpannableStringBuilder style = getStyle();
+        boolean isNeedLineFeed = selStart != 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
+        style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
+        int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
+        int end = start + 1;
+        style.insert(start, "*");
+        style.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        style.insert(end, STRING_LINE_FEED);
+        setText(style);
+        setSelection(getSpanEnd(imageSpan) + 1);
+
+        setMovementMethod(ClickableMovementMethod.get());
     }
 }

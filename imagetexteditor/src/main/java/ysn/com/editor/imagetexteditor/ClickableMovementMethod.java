@@ -19,7 +19,7 @@ public class ClickableMovementMethod extends LinkMovementMethod {
 
     private static ClickableMovementMethod sInstance;
 
-    public static ClickableMovementMethod getInstance() {
+    public static ClickableMovementMethod get() {
         if (sInstance == null) {
             sInstance = new ClickableMovementMethod();
         }
@@ -54,12 +54,8 @@ public class ClickableMovementMethod extends LinkMovementMethod {
                     Selection.setSelection(buffer, buffer.getSpanStart(clickableSpans[0]), buffer.getSpanEnd(clickableSpans[0]));
                 }
                 return true;
-            } else if (imageSpans.length != 0) {
-                if (action == MotionEvent.ACTION_UP) {
-                    imageSpans[0].onClick(textView, x, y);
-                } else {
-                    Selection.setSelection(buffer, buffer.getSpanStart(imageSpans[0]), buffer.getSpanEnd(imageSpans[0]));
-                }
+            } else if (imageSpans.length != 0 ) {
+                imageSpans[0].onClick(textView, x, y, imageSpans[0], action == MotionEvent.ACTION_DOWN);
                 return true;
             } else {
                 Selection.removeSelection(buffer);

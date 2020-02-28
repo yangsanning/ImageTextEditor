@@ -68,7 +68,7 @@ public class CloseImageSpan extends ImageSpan {
      * 提供给{@link ClickableMovementMethod}使用的点击事件
      * 这里进行不同点击事件的回调处理
      */
-    public void onClick(View view, int x, int y) {
+    public void onClick(View view, int x, int y, CloseImageSpan imageSpan, boolean isDown) {
         if (onCloseImageSpanClickListener == null) {
             return;
         }
@@ -76,7 +76,11 @@ public class CloseImageSpan extends ImageSpan {
         if (closeRect != null && closeRect.contains(x, y)) {
             onCloseImageSpanClickListener.onClose(this);
         } else {
-            onCloseImageSpanClickListener.onImageClick();
+            if (isDown) {
+                onCloseImageSpanClickListener.onImageDown(imageSpan);
+            }else {
+                onCloseImageSpanClickListener.onImageUp(imageSpan);
+            }
         }
     }
 

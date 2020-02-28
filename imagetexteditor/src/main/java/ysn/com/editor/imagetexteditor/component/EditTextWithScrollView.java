@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.imagetexteditor.component;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatEditText;

@@ -1,7 +1,10 @@
 package ysn.com.editor.imagetexteditor.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * @Author yangsanning
@@ -22,5 +25,38 @@ public class DeviceUtils {
         DisplayMetrics outMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
         return outMetrics.widthPixels;
+    }
+
+    /**
+     * 关闭键盘输入法
+     */
+    public static void hideSoftInput(Context context, View v) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
+    /**
+     * 显示键盘输入法
+     */
+    public static void showSoftInput(Context context, View v) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(v, 0);
+        }
+    }
+
+    /**
+     * 判断软键盘是否弹出
+     */
+    public static boolean isShowKeyboard(Context context, View v) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null && imm.hideSoftInputFromWindow(v.getWindowToken(), 0)) {
+            imm.showSoftInput(v, 0);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
