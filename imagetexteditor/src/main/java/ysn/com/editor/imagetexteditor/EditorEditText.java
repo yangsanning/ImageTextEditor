@@ -61,7 +61,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         this.selStart = selStart;
         this.selEnd = selEnd;
 
-        LogUtils.d("onSelectionChanged " + " selStart: " + selStart);
+        LogUtils.d("onSelectionChanged " + " selStart: " + selStart + " selEnd: " + selEnd);
 
         Editable text = getText();
         CloseImageSpan[] imageSpans = text.getSpans(selStart - 1, selStart, CloseImageSpan.class);
@@ -84,17 +84,24 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         int spanStart = getSpanStart(text, lastImageSpan);
         int spanEnd = getSpanEnd(text, lastImageSpan);
         if (selStart >= 0 || selEnd >= 0) {
-            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
         }
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        LogUtils.d("dispatchKeyEvent");
         if (event.getKeyCode() == KeyEvent.KEYCODE_DEL && event.getAction() != KeyEvent.ACTION_UP) {
-            Editable text = getText();
-            CloseImageSpan[] imageSpans = text.getSpans(selStart - 1, selStart, CloseImageSpan.class);
-            if (imageSpans.length > 0) {
-                return true;
+            if (selStart == selEnd) {
+                Editable text = getText();
+                CloseImageSpan[] imageSpans = text.getSpans(selStart - 2, selStart, CloseImageSpan.class);
+                if (imageSpans.length > 0) {
+                    lastImageSpan = imageSpans[0];
+                    lastImageSpan.setSelect(Boolean.TRUE);
+                    updateImageSpan(selStart, selEnd, text);
+                    hideSoftInput();
+                    return true;
+                }
             }
         }
         return super.dispatchKeyEvent(event);
@@ -171,7 +178,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         int spanEnd = getSpanEnd(text, lastImageSpan);
         if (spanStart >= 0 || spanEnd >= 0) {
             lastImageSpan.setSelect(Boolean.FALSE);
-            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
             lastImageSpan = null;
         }
     }
@@ -229,15 +236,18 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
     }
 
     public void addImage(Drawable drawable) {
+        if (!hasFocus()) {
+            return;
+        }
         Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.editor_ic_close), 60, 60);
         ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, this);
         SpannableStringBuilder style = getStyle();
-        boolean isNeedLineFeed = selStart != 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
+        boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
         style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
         int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
         int end = start + 1;
         style.insert(start, "*");
-        style.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        style.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
         style.insert(end, STRING_LINE_FEED);
         setText(style);
         setSelection(getSpanEnd(imageSpan) + 1);
