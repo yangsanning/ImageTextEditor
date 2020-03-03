@@ -20,7 +20,12 @@ import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
  */
 public class CloseImageSpan extends ImageSpan {
 
-    private static final float padding = 30;
+    /**
+     * marginTop:   关闭图标的上边距
+     * marginRight: 关闭图标的右边距
+     */
+    private float closeIconMarginTop;
+    private float closeIconMarginRight;
 
     private boolean isInit;
     private boolean isSelect;
@@ -29,13 +34,16 @@ public class CloseImageSpan extends ImageSpan {
     private Rect closeRect;
     private OnCloseImageSpanClickListener onCloseImageSpanClickListener;
 
-    public CloseImageSpan(Drawable drawable, Bitmap closeBitmap) {
+    public CloseImageSpan(Drawable drawable, Bitmap closeBitmap, float closeIconMarginTop, float closeIconMarginRight) {
         super(drawable);
         this.closeBitmap = closeBitmap;
+        this.closeIconMarginTop = closeIconMarginTop;
+        this.closeIconMarginRight = closeIconMarginRight;
     }
 
-    public CloseImageSpan(Drawable drawable, Bitmap closeBitmap, OnCloseImageSpanClickListener onCloseImageSpanClickListener) {
-        this(drawable, closeBitmap);
+    public CloseImageSpan(Drawable drawable, Bitmap closeBitmap, float closeIconMarginTop, float closeIconMarginRight,
+                          OnCloseImageSpanClickListener onCloseImageSpanClickListener) {
+        this(drawable, closeBitmap, closeIconMarginTop, closeIconMarginRight);
         this.onCloseImageSpanClickListener = onCloseImageSpanClickListener;
     }
 
@@ -50,8 +58,8 @@ public class CloseImageSpan extends ImageSpan {
         super.draw(canvas, text, start, end, x, top, y, bottom, paint);
         if (isInit && isSelect) {
             Rect drawableRect = getDrawable().getBounds();
-            float closeBitmapLeft = x + drawableRect.right - closeBitmap.getWidth() - padding;
-            float closeBitmapTop = y - drawableRect.bottom + padding;
+            float closeBitmapLeft = x + drawableRect.right - closeBitmap.getWidth() - closeIconMarginRight;
+            float closeBitmapTop = y - drawableRect.bottom + closeIconMarginTop;
 
             closeRect = new Rect((int) closeBitmapLeft, (int) closeBitmapTop,
                     ((int) closeBitmapLeft + closeBitmap.getWidth()), ((int) closeBitmapTop + closeBitmap.getHeight()));
@@ -78,7 +86,7 @@ public class CloseImageSpan extends ImageSpan {
         } else {
             if (isDown) {
                 onCloseImageSpanClickListener.onImageDown(imageSpan);
-            }else {
+            } else {
                 onCloseImageSpanClickListener.onImageUp(imageSpan);
             }
         }

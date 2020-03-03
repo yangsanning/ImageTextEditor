@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="EditorEditText">
+        <attr name="eet_close_icon" format="reference" />
+        <attr name="eet_close_icon_width" format="reference" />
+        <attr name="eet_close_icon_height" format="reference" />
+        <attr name="eet_close_icon_margin_top" format="reference" />
+        <attr name="eet_close_icon_margin_right" format="reference" />
+    </declare-styleable>
+</resources>

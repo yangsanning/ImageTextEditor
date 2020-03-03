@@ -1,6 +1,7 @@
 package ysn.com.editor.imagetexteditor;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
@@ -31,19 +32,43 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
 
     private static final String STRING_LINE_FEED = "\n";
 
+    /**
+     * closeIconRes:    关闭按钮的资源id
+     * closeIconWidth:  关闭按钮的宽
+     * closeIconHeight: 关闭按钮的高
+     * marginTop:       关闭图标的上边距
+     * marginTop:       关闭图标的上边距
+     * marginRight:     关闭图标的右边距
+     */
+    private int closeIconRes;
+    private int closeIconWidth;
+    private int closeIconHeight;
+    private float closeIconMarginTop;
+    private float closeIconMarginRight;
+
     private int selStart, selEnd;
     private CloseImageSpan lastImageSpan;
 
     public EditorEditText(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public EditorEditText(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public EditorEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.EditorEditText);
+
+        closeIconRes = typedArray.getResourceId(R.styleable.EditorEditText_eet_close_icon, R.drawable.editor_ic_close);
+        closeIconWidth = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_width, 60);
+        closeIconHeight = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_height, 60);
+        closeIconMarginTop = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_margin_top, 30);
+        closeIconMarginRight = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_margin_right, 30);
+
+        typedArray.recycle();
     }
 
     @Override
@@ -84,7 +109,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         int spanStart = getSpanStart(text, lastImageSpan);
         int spanEnd = getSpanEnd(text, lastImageSpan);
         if (selStart >= 0 || selEnd >= 0) {
-            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
+            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -178,7 +203,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         int spanEnd = getSpanEnd(text, lastImageSpan);
         if (spanStart >= 0 || spanEnd >= 0) {
             lastImageSpan.setSelect(Boolean.FALSE);
-            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
+            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             lastImageSpan = null;
         }
     }
@@ -239,15 +264,15 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         if (!hasFocus()) {
             return;
         }
-        Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.editor_ic_close), 60, 60);
-        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, this);
+        Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(closeIconRes), closeIconWidth, closeIconHeight);
+        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, closeIconMarginTop, closeIconMarginRight, this);
         SpannableStringBuilder style = getStyle();
         boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
         style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
         int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
         int end = start + 1;
         style.insert(start, "*");
-        style.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
+        style.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         style.insert(end, STRING_LINE_FEED);
         setText(style);
         setSelection(getSpanEnd(imageSpan) + 1);
