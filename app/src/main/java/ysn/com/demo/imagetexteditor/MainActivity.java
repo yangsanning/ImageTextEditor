@@ -2,8 +2,10 @@ package ysn.com.demo.imagetexteditor;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 import ysn.com.editor.imagetexteditor.EditorEditText;
@@ -30,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
                         (DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd()),
                         600);
                 editorEditView.addImage(drawable);
+            }
+        });
+
+        final NestedScrollView scrollView = findViewById(R.id.main_activity_scroll_view);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                editorEditView.setHeight(scrollView.getMeasuredHeight());
             }
         });
     }

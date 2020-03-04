@@ -8,20 +8,32 @@
     tools:context=".MainActivity">
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/main_activity_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@android:color/white"
         android:fillViewport="true">
 
-        <ysn.com.editor.imagetexteditor.EditorEditText
-            android:id="@+id/main_activity_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@null"
-            android:gravity="start"
-            android:padding="8dp"
-            app:eet_close_icon_margin_top="@dimen/eet_close_icon_margin_top" />
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入标题" />
+
+            <ysn.com.editor.imagetexteditor.EditorEditText
+                android:id="@+id/main_activity_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="start"
+                android:paddingTop="16dp"
+                app:eet_close_icon_margin_top="@dimen/eet_close_icon_margin_top" />
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
     <LinearLayout
