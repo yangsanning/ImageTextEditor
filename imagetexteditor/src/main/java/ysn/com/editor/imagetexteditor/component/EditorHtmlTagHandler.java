@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.imagetexteditor.component;
 
 import android.content.Context;
 import android.text.Editable;
@@ -10,6 +10,9 @@ import org.xml.sax.XMLReader;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+
+import ysn.com.editor.imagetexteditor.component.LoadingDrawable;
+import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
 
 /**
  * @Author yangsanning
@@ -58,7 +61,9 @@ public class EditorHtmlTagHandler implements Html.TagHandler {
         stopIndex = output.length();
         String url = output.subSequence(startIndex, stopIndex).toString();
 
-        UrlImageSpan urlImageSpan = new UrlImageSpan(context, url, imageWidth, textView);
+        LoadingDrawable loadingDrawable = new LoadingDrawable(imageWidth, 600);
+        loadingDrawable.setBounds(0, 0, imageWidth, 600);
+        UrlImageSpan urlImageSpan = new UrlImageSpan(loadingDrawable, url, imageWidth, textView);
         output.setSpan(urlImageSpan, startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 

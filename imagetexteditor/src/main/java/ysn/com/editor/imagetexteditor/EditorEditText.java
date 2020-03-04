@@ -15,8 +15,10 @@ import android.widget.EditText;
 
 import java.lang.reflect.Method;
 
+import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
+import ysn.com.editor.imagetexteditor.span.CloseImageSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;

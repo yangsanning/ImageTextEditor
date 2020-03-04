@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.imagetexteditor.component;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,10 +17,14 @@ import android.graphics.drawable.Drawable;
  */
 public class LoadingDrawable extends Drawable {
     private Paint paint;
-    private final Rect rect;
+    private Rect rect;
 
     public LoadingDrawable(int width, int height) {
         super();
+        init(width, height);
+    }
+
+    private void init(int width, int height) {
         rect = new Rect(0, 0, width, height);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.parseColor("#33308ef2"));

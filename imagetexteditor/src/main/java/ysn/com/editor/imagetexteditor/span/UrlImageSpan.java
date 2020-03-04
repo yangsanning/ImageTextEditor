@@ -1,7 +1,5 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.imagetexteditor.span;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,8 +31,8 @@ public class UrlImageSpan extends ImageSpan {
 
     private boolean icDownload;
 
-    public UrlImageSpan(Context context, String url, int imageWidth, TextView textView) {
-        super(context, R.drawable.image);
+    public UrlImageSpan(@NonNull Drawable drawable,String url, int imageWidth, TextView textView) {
+        super(drawable);
         this.url = url;
         this.imageWidth = imageWidth;
         this.textView = textView;

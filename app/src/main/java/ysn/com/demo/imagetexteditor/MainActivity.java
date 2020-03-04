@@ -7,15 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 import ysn.com.editor.imagetexteditor.EditorEditText;
-import ysn.com.editor.imagetexteditor.EditorHtmlTagHandler;
+import ysn.com.editor.imagetexteditor.component.EditorHtmlTagHandler;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 
 public class MainActivity extends AppCompatActivity {

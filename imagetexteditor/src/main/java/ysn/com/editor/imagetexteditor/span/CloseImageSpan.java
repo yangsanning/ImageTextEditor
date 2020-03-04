@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.imagetexteditor.span;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,6 +9,7 @@ import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
 
+import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
 
 /**

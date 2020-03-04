@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.imagetexteditor.component;
 
 import android.text.Layout;
 import android.text.Selection;
@@ -7,6 +7,8 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
+
+import ysn.com.editor.imagetexteditor.span.CloseImageSpan;
 
 /**
  * @Author yangsanning

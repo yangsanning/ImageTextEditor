@@ -1,6 +1,6 @@
 package ysn.com.editor.imagetexteditor.listener;
 
-import ysn.com.editor.imagetexteditor.CloseImageSpan;
+import ysn.com.editor.imagetexteditor.span.CloseImageSpan;
 
 /**
  * @Author yangsanning
