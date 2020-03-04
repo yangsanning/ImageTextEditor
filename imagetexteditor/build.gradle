@@ -23,4 +23,6 @@ android {
 
 dependencies {
     implementation rootProject.ext.supportLibs
+
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
 }

@@ -1,9 +1,10 @@
 package ysn.com.editor.imagetexteditor;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
+import android.widget.TextView;
 
 import org.xml.sax.XMLReader;
 
@@ -21,15 +22,19 @@ public class EditorHtmlTagHandler implements Html.TagHandler {
 
     private static final String TAG_IMAGE = "general";
 
-    private int width, height;
+    private int imageWidth;
+
+    private Context context;
+    private TextView textView;
 
     private int startIndex = 0;
     private int stopIndex = 0;
     private final HashMap<String, String> attributes = new HashMap<String, String>();
 
-    public EditorHtmlTagHandler(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public EditorHtmlTagHandler(Context context, TextView textView, int imageWidth) {
+        this.context = context;
+        this.textView = textView;
+        this.imageWidth = imageWidth;
     }
 
     @Override
@@ -52,9 +57,9 @@ public class EditorHtmlTagHandler implements Html.TagHandler {
     public void endFont(String tag, Editable output, XMLReader xmlReader) {
         stopIndex = output.length();
         String url = output.subSequence(startIndex, stopIndex).toString();
-        Drawable drawable = new LoadingDrawable(width, height);
-        drawable.setBounds(0, 0, width, height);
-        output.setSpan(new LoadingSpan(drawable, url), startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        UrlImageSpan urlImageSpan = new UrlImageSpan(context, url, imageWidth, textView);
+        output.setSpan(urlImageSpan, startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void processAttributes(final XMLReader xmlReader) {

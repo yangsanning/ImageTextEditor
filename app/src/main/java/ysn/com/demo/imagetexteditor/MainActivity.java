@@ -1,7 +1,12 @@
 package ysn.com.demo.imagetexteditor;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -14,6 +19,8 @@ import ysn.com.editor.imagetexteditor.EditorHtmlTagHandler;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL = 0x00000012;
 
     private EditorEditText editorEditView;
 
@@ -38,21 +45,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final NestedScrollView scrollView = findViewById(R.id.main_activity_scroll_view);
-        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                editorEditView.setHeight(scrollView.getMeasuredHeight());
-            }
-        });
-
-        setData();
+        int hasWriteExternalPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (hasWriteExternalPermission == PackageManager.PERMISSION_GRANTED) {
+            setData();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE_WRITE_EXTERNAL);
+        }
     }
 
     private void setData() {
+        int imageWidth = DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd();
         editorEditView.setText(Html.fromHtml(getData(), null, new EditorHtmlTagHandler(
-                DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd(), 600)));
+                this, editorEditView, imageWidth)));
     }
 
     public String getData() {
@@ -64,5 +70,17 @@ public class MainActivity extends AppCompatActivity {
                 "\n" +
                 "表达你的嫩嫩的难道你难道难道你那等你那些年你那些年那些那些年那些那些那些内心呢"
                         .replace("\n", "<br />");
+    }
+
+    /**
+     * 处理权限申请的回调。
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE_WRITE_EXTERNAL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setData();
+            }
+        }
     }
 }
