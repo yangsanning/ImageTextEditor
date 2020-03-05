@@ -22,4 +22,18 @@ public interface IEditorSpan {
      * @return 标签尾
      */
     String getEndTag();
+
+    /**
+     * 获取源文本（带标签）
+     *
+     * @return 源文本（带标签）
+     */
+    String getText();
+
+    /**
+     * 获取源文本长度
+     *
+     * @return 源文本长度
+     */
+    int length();
 }

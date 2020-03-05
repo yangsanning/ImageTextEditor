@@ -44,6 +44,7 @@ public class UrlImageSpan extends ImageSpan implements IEditorSpan {
     private Bitmap closeBitmap;
     private Rect closeRect;
 
+    private String sourceText;
     private String imageUrl;
     private int imageWidth;
     private TextView textView;
@@ -66,6 +67,16 @@ public class UrlImageSpan extends ImageSpan implements IEditorSpan {
     @Override
     public String getEndTag() {
         return "</general>";
+    }
+
+    @Override
+    public String getText() {
+        return sourceText == null ? (sourceText = (getStartTag() + imageUrl + getEndTag())) : sourceText;
+    }
+
+    @Override
+    public int length() {
+        return this.getText() == null ? 0 : sourceText.length();
     }
 
     /**

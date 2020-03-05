@@ -22,7 +22,6 @@ import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
-import ysn.com.editor.imagetexteditor.utils.SpanUtils;
 
 /**
  * @Author yangsanning
@@ -232,7 +231,7 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
         Editable text = getText();
         int spanEnd = getSpanEnd(text, closeImageSpan);
         text.removeSpan(closeImageSpan);
-        text.replace(spanEnd - 1, spanEnd, "");
+        text.replace(spanEnd - closeImageSpan.length(), spanEnd, "");
         setText(text);
         setSelection(Math.min(spanEnd, text.length()));
     }
@@ -289,17 +288,17 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
         boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
         style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
         int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
-        int end = start + 1;
-        style.insert(start, "*");
+        int end = start + urlImageSpan.length();
+        style.insert(start, urlImageSpan.getText());
         style.setSpan(urlImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         style.insert(end, STRING_LINE_FEED);
         setText(style);
-        setSelection(getSpanEnd(urlImageSpan) + 1);
+        setSelection(end+1);
 
         setMovementMethod(ClickableMovementMethod.get());
     }
 
     public String getEditTexts() {
-        return SpanUtils.getEditTexts(getText());
+        return getText().toString();
     }
 }
