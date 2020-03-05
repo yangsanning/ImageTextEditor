@@ -22,6 +22,7 @@ import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
+import ysn.com.editor.imagetexteditor.utils.SpanUtils;
 
 /**
  * @Author yangsanning
@@ -35,18 +36,20 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
     private static final String STRING_LINE_FEED = "\n";
 
     /**
-     * closeIconRes:    关闭按钮的资源id
-     * closeIconWidth:  关闭按钮的宽
-     * closeIconHeight: 关闭按钮的高
-     * marginTop:       关闭图标的上边距
-     * marginTop:       关闭图标的上边距
-     * marginRight:     关闭图标的右边距
+     * closeIconRes:          关闭按钮的资源id
+     * closeIconWidth:        关闭按钮的宽
+     * closeIconHeight:       关闭按钮的高
+     * closeIconMarginTop:    关闭图标的上边距
+     * closeIconMarginRight:  关闭图标的右边距
+     * imageWidth:            图片宽度
      */
     private int closeIconRes;
     private int closeIconWidth;
     private int closeIconHeight;
     private float closeIconMarginTop;
     private float closeIconMarginRight;
+    private int imageWidth = 800;
+    private int loadingDrawableHeight = 600;
 
     private int selStart, selEnd;
     private UrlImageSpan lastImageSpan;
@@ -262,14 +265,20 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
         return Boolean.TRUE;
     }
 
-    public void addImage() {
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public void setLoadingDrawableHeight(int loadingDrawableHeight) {
+        this.loadingDrawableHeight = loadingDrawableHeight;
+    }
+
+    public void addImage(String imageUrl) {
         if (!hasFocus()) {
             return;
         }
         Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(closeIconRes), closeIconWidth, closeIconHeight);
-        LoadingDrawable loadingDrawable = new LoadingDrawable(1000, 600);
-        loadingDrawable.setBounds(0, 0, 1000, 600);
-        UrlImageSpan urlImageSpan = new UrlImageSpan(loadingDrawable, "http://static.jiangjuncj.com/test/app/user/chat/a21111de62a048a9914295bcfd35bf2e.png?width=3024.000000&height=4032.000000", 1000, this);
+        UrlImageSpan urlImageSpan = new UrlImageSpan(new LoadingDrawable(imageWidth, loadingDrawableHeight), imageUrl, imageWidth, this);
         urlImageSpan.bindCloseBitmap(closeBitmap, closeIconMarginTop, closeIconMarginRight);
         urlImageSpan.setOnCloseImageSpanClickListener(this);
         SpannableStringBuilder style = getStyle();
@@ -284,5 +293,9 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
         setSelection(getSpanEnd(urlImageSpan) + 1);
 
         setMovementMethod(ClickableMovementMethod.get());
+    }
+
+    public String getEditTexts() {
+        return SpanUtils.getEditTexts(getText());
     }
 }

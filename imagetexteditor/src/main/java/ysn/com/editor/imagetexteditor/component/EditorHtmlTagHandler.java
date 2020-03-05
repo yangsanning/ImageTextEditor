@@ -62,7 +62,6 @@ public class EditorHtmlTagHandler implements Html.TagHandler {
         String url = output.subSequence(startIndex, stopIndex).toString();
 
         LoadingDrawable loadingDrawable = new LoadingDrawable(imageWidth, 600);
-        loadingDrawable.setBounds(0, 0, imageWidth, 600);
         UrlImageSpan urlImageSpan = new UrlImageSpan(loadingDrawable, url, imageWidth, textView);
         output.setSpan(urlImageSpan, startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }

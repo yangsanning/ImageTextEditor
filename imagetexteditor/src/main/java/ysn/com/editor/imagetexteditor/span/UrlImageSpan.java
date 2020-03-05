@@ -2,7 +2,6 @@ package ysn.com.editor.imagetexteditor.span;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,7 +19,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.lang.reflect.Field;
 
-import ysn.com.editor.imagetexteditor.R;
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 
@@ -47,25 +45,18 @@ public class UrlImageSpan extends ImageSpan {
     private Bitmap closeBitmap;
     private Rect closeRect;
 
-    private String url;
+    private String imageUrl;
     private int imageWidth;
     private TextView textView;
 
     private boolean icDownload;
     private OnCloseImageSpanClickListener onCloseImageSpanClickListener;
 
-    public UrlImageSpan(@NonNull Drawable drawable, String url, int imageWidth, TextView textView) {
+    public UrlImageSpan(@NonNull Drawable drawable, String imageUrl, int imageWidth, TextView textView) {
         super(drawable);
-        this.url = url;
+        this.imageUrl = imageUrl;
         this.imageWidth = imageWidth;
         this.textView = textView;
-
-
-        closeBitmap = ImageUtils.drawableToBitmap(textView.getContext().getResources()
-                .getDrawable(R.drawable.editor_ic_close), 60, 60);
-
-        this.closeIconMarginTop = 30;
-        this.closeIconMarginRight = 30;
     }
 
     /**
@@ -77,7 +68,7 @@ public class UrlImageSpan extends ImageSpan {
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
         super.draw(canvas, text, start, end, x, top, y, bottom, paint);
-        if (isInit && isSelect) {
+        if (isInit && isSelect && closeBitmap != null) {
             Rect drawableRect = getDrawable().getBounds();
             float closeBitmapLeft = x + drawableRect.right - closeBitmap.getWidth() - closeIconMarginRight;
             float closeBitmapTop = y - drawableRect.bottom + closeIconMarginTop;
@@ -90,13 +81,12 @@ public class UrlImageSpan extends ImageSpan {
             closeRect = null;
         }
         isInit = true;
-        Log.d("test", "draw");
     }
 
     @Override
     public Drawable getDrawable() {
         if (!icDownload) {
-            Glide.with(textView.getContext()).load(url).asBitmap().into(new SimpleTarget<Bitmap>() {
+            Glide.with(textView.getContext()).load(imageUrl).asBitmap().into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
@@ -145,12 +135,15 @@ public class UrlImageSpan extends ImageSpan {
         }
     }
 
-    public void bindCloseBitmap(Bitmap closeBitmap,  float closeIconMarginTop, float closeIconMarginRight){
+    public void bindCloseBitmap(Bitmap closeBitmap, float closeIconMarginTop, float closeIconMarginRight) {
         this.closeBitmap = closeBitmap;
         this.closeIconMarginTop = closeIconMarginTop;
         this.closeIconMarginRight = closeIconMarginRight;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
     public void setSelect(boolean select) {
         isSelect = select;

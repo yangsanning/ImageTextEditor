@@ -1,22 +1,22 @@
 package ysn.com.demo.imagetexteditor;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import ysn.com.editor.imagetexteditor.EditorEditText;
-import ysn.com.editor.imagetexteditor.component.EditorHtmlTagHandler;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL = 0x00000012;
 
@@ -29,14 +29,21 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         editorEditView = findViewById(R.id.main_activity_text);
+        editorEditView.setImageWidth(DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd());
 
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editorEditView.addImage();
+                editorEditView.addImage("http://static.jiangjuncj.com/test/app/user/chat/3747edb200c8412d92110d46e2b4c079.png?width=4032.000000&height=3024.000000");
             }
         });
 
+        checkPermission();
+
+        findViewById(R.id.main_activity_preview).setOnClickListener(this);
+    }
+
+    private void checkPermission() {
         int hasWriteExternalPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (hasWriteExternalPermission == PackageManager.PERMISSION_GRANTED) {
@@ -62,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
                 "\n" +
                 "表达你的嫩嫩的难道你难道难道你那等你那些年你那些年那些那些年那些那些那些内心呢"
                         .replace("\n", "<br />");
+    }
+
+    @Override
+    public void onClick(View v) {
+        String data = editorEditView.getEditTexts();
+        if (TextUtils.isEmpty(data)) {
+            Toast.makeText(this, "数据为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(this, PreviewActivity.class);
+        intent.putExtra(PreviewActivity.EXTRA_TEXT, data);
+        startActivity(intent);
     }
 
     /**

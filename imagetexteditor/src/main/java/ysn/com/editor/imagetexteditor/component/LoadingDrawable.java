@@ -25,6 +25,8 @@ public class LoadingDrawable extends Drawable {
     }
 
     private void init(int width, int height) {
+        setBounds(0, 0, width, height);
+
         rect = new Rect(0, 0, width, height);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.parseColor("#33308ef2"));
