@@ -21,9 +21,9 @@ public class SpanUtils {
             UrlImageSpan span = spans[i];
             int start = builder.getSpanStart(span);
             int end = builder.getSpanEnd(span);
-            builder.insert(end, "</general>");
+            builder.insert(end, span.getEndTag());
             builder.replace(start, start + 1, span.getImageUrl());
-            builder.insert(start, "<general>");
+            builder.insert(start, span.getStartTag());
         }
         return builder.toString();
     }

@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,7 +29,7 @@ import ysn.com.editor.imagetexteditor.utils.ImageUtils;
  * @History 2020/3/4 author: description:
  */
 
-public class UrlImageSpan extends ImageSpan {
+public class UrlImageSpan extends ImageSpan implements IEditorSpan {
 
     /**
      * marginTop:   关闭图标的上边距
@@ -57,6 +56,16 @@ public class UrlImageSpan extends ImageSpan {
         this.imageUrl = imageUrl;
         this.imageWidth = imageWidth;
         this.textView = textView;
+    }
+
+    @Override
+    public String getStartTag() {
+        return "<general>";
+    }
+
+    @Override
+    public String getEndTag() {
+        return "</general>";
     }
 
     /**
