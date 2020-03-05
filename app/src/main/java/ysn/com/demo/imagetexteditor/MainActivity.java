@@ -33,13 +33,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 获取图片
-                Drawable drawable = getResources().getDrawable(R.drawable.image);
-                // 设置固有宽高
-                drawable.setBounds(0, 0,
-                        (DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd()),
-                        600);
-                editorEditView.addImage(drawable);
+                editorEditView.addImage();
             }
         });
 
@@ -54,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setData() {
-        int imageWidth = DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd();
-        editorEditView.setText(Html.fromHtml(getData(), null, new EditorHtmlTagHandler(
-                this, editorEditView, imageWidth)));
+//        int imageWidth = DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd();
+//        editorEditView.setText(Html.fromHtml(getData(), null, new EditorHtmlTagHandler(
+//                this, editorEditView, imageWidth)));
     }
 
     public String getData() {

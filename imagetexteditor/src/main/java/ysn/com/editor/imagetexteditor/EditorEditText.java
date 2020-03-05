@@ -3,7 +3,6 @@ package ysn.com.editor.imagetexteditor;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -11,14 +10,15 @@ import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EditText;
 
 import java.lang.reflect.Method;
 
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
-import ysn.com.editor.imagetexteditor.listener.OnCloseImageSpanClickListener;
-import ysn.com.editor.imagetexteditor.span.CloseImageSpan;
+import ysn.com.editor.imagetexteditor.component.LoadingDrawable;
+import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
@@ -30,7 +30,7 @@ import ysn.com.editor.imagetexteditor.utils.LogUtils;
  * @Date 2020/2/26
  * @History 2020/2/26 author: description:
  */
-public class EditorEditText extends EditTextWithScrollView implements OnCloseImageSpanClickListener {
+public class EditorEditText extends EditTextWithScrollView implements UrlImageSpan.OnCloseImageSpanClickListener {
 
     private static final String STRING_LINE_FEED = "\n";
 
@@ -49,7 +49,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
     private float closeIconMarginRight;
 
     private int selStart, selEnd;
-    private CloseImageSpan lastImageSpan;
+    private UrlImageSpan lastImageSpan;
 
     public EditorEditText(Context context) {
         this(context, null);
@@ -91,7 +91,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         LogUtils.d("onSelectionChanged " + " selStart: " + selStart + " selEnd: " + selEnd);
 
         Editable text = getText();
-        CloseImageSpan[] imageSpans = text.getSpans(selStart - 1, selStart, CloseImageSpan.class);
+        UrlImageSpan[] imageSpans = text.getSpans(selStart - 1, selStart, UrlImageSpan.class);
         if (imageSpans.length > 0) {
             lastImageSpan = imageSpans[0];
             lastImageSpan.setSelect(Boolean.TRUE);
@@ -121,7 +121,7 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         if (event.getKeyCode() == KeyEvent.KEYCODE_DEL && event.getAction() != KeyEvent.ACTION_UP) {
             if (selStart == selEnd) {
                 Editable text = getText();
-                CloseImageSpan[] imageSpans = text.getSpans(selStart - 2, selStart, CloseImageSpan.class);
+                UrlImageSpan[] imageSpans = text.getSpans(selStart - 2, selStart, UrlImageSpan.class);
                 if (imageSpans.length > 0) {
                     lastImageSpan = imageSpans[0];
                     lastImageSpan.setSelect(Boolean.TRUE);
@@ -174,18 +174,18 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
     }
 
     /**
-     * 点击{@link CloseImageSpan}图片-按下
+     * 点击{@link UrlImageSpan#onClick(View, int, int, UrlImageSpan, boolean)}图片-按下
      */
     @Override
-    public void onImageDown(CloseImageSpan imageSpan) {
+    public void onImageDown(UrlImageSpan imageSpan) {
         setInputVisible(bFalse());
     }
 
     /**
-     * 点击{@link CloseImageSpan}图片-抬起
+     * 点击@link UrlImageSpan#onClick(View, int, int, UrlImageSpan, boolean)}图片-抬起
      */
     @Override
-    public void onImageUp(CloseImageSpan imageSpan) {
+    public void onImageUp(UrlImageSpan imageSpan) {
         resetLastImageSpan();
         lastImageSpan = imageSpan;
         lastImageSpan.setSelect(Boolean.TRUE);
@@ -221,10 +221,10 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
     }
 
     /**
-     * 点击{@link CloseImageSpan}关闭按钮
+     * 点击{@link UrlImageSpan#onClick(View, int, int, UrlImageSpan, boolean)}关闭按钮
      */
     @Override
-    public void onClose(final CloseImageSpan closeImageSpan) {
+    public void onClose(final UrlImageSpan closeImageSpan) {
         lastImageSpan = null;
         Editable text = getText();
         int spanEnd = getSpanEnd(text, closeImageSpan);
@@ -262,22 +262,26 @@ public class EditorEditText extends EditTextWithScrollView implements OnCloseIma
         return Boolean.TRUE;
     }
 
-    public void addImage(Drawable drawable) {
+    public void addImage() {
         if (!hasFocus()) {
             return;
         }
         Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(closeIconRes), closeIconWidth, closeIconHeight);
-        ImageSpan imageSpan = new CloseImageSpan(drawable, closeBitmap, closeIconMarginTop, closeIconMarginRight, this);
+        LoadingDrawable loadingDrawable = new LoadingDrawable(1000, 600);
+        loadingDrawable.setBounds(0, 0, 1000, 600);
+        UrlImageSpan urlImageSpan = new UrlImageSpan(loadingDrawable, "http://static.jiangjuncj.com/test/app/user/chat/a21111de62a048a9914295bcfd35bf2e.png?width=3024.000000&height=4032.000000", 1000, this);
+        urlImageSpan.bindCloseBitmap(closeBitmap, closeIconMarginTop, closeIconMarginRight);
+        urlImageSpan.setOnCloseImageSpanClickListener(this);
         SpannableStringBuilder style = getStyle();
         boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
         style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
         int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
         int end = start + 1;
         style.insert(start, "*");
-        style.setSpan(imageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        style.setSpan(urlImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         style.insert(end, STRING_LINE_FEED);
         setText(style);
-        setSelection(getSpanEnd(imageSpan) + 1);
+        setSelection(getSpanEnd(urlImageSpan) + 1);
 
         setMovementMethod(ClickableMovementMethod.get());
     }

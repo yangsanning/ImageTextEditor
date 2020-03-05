@@ -1,12 +1,17 @@
 package ysn.com.editor.imagetexteditor.span;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +19,10 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.lang.reflect.Field;
+
+import ysn.com.editor.imagetexteditor.R;
+import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
+import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 
 /**
  * @Author yangsanning
@@ -25,17 +34,63 @@ import java.lang.reflect.Field;
 
 public class UrlImageSpan extends ImageSpan {
 
+    /**
+     * marginTop:   关闭图标的上边距
+     * marginRight: 关闭图标的右边距
+     */
+    private float closeIconMarginTop;
+    private float closeIconMarginRight;
+
+    private boolean isInit;
+    private boolean isSelect;
+
+    private Bitmap closeBitmap;
+    private Rect closeRect;
+
     private String url;
     private int imageWidth;
     private TextView textView;
 
     private boolean icDownload;
+    private OnCloseImageSpanClickListener onCloseImageSpanClickListener;
 
-    public UrlImageSpan(@NonNull Drawable drawable,String url, int imageWidth, TextView textView) {
+    public UrlImageSpan(@NonNull Drawable drawable, String url, int imageWidth, TextView textView) {
         super(drawable);
         this.url = url;
         this.imageWidth = imageWidth;
         this.textView = textView;
+
+
+        closeBitmap = ImageUtils.drawableToBitmap(textView.getContext().getResources()
+                .getDrawable(R.drawable.editor_ic_close), 60, 60);
+
+        this.closeIconMarginTop = 30;
+        this.closeIconMarginRight = 30;
+    }
+
+    /**
+     * 绘制关闭按钮
+     *
+     * @param x 基线的横坐标（以 TextView 左上角为坐标原点）
+     * @param y 基线的纵坐标（以 TextView 左上角为坐标原点）
+     */
+    @Override
+    public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+        super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+        if (isInit && isSelect) {
+            Rect drawableRect = getDrawable().getBounds();
+            float closeBitmapLeft = x + drawableRect.right - closeBitmap.getWidth() - closeIconMarginRight;
+            float closeBitmapTop = y - drawableRect.bottom + closeIconMarginTop;
+
+            closeRect = new Rect((int) closeBitmapLeft, (int) closeBitmapTop,
+                    ((int) closeBitmapLeft + closeBitmap.getWidth()), ((int) closeBitmapTop + closeBitmap.getHeight()));
+
+            canvas.drawBitmap(closeBitmap, closeBitmapLeft, closeBitmapTop, paint);
+        } else {
+            closeRect = null;
+        }
+        isInit = true;
+        Log.d("test", "draw");
     }
 
     @Override
@@ -45,7 +100,7 @@ public class UrlImageSpan extends ImageSpan {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(textView.getContext().getResources(), zoom(resource, imageWidth));
+                    BitmapDrawable bitmapDrawable = new BitmapDrawable(textView.getContext().getResources(), ImageUtils.zoom(resource, imageWidth));
                     bitmapDrawable.setBounds(0, 0, bitmapDrawable.getIntrinsicWidth(), bitmapDrawable.getIntrinsicHeight());
 
                     Field mDrawable;
@@ -71,26 +126,61 @@ public class UrlImageSpan extends ImageSpan {
     }
 
     /**
-     * 按宽度缩放图片
-     *
-     * @param originalBitmap 需要缩放的图片源
-     * @param newWidth       需要缩放成的图片宽度
-     * @return 缩放后的图片
+     * 提供给{@link ClickableMovementMethod}使用的点击事件
+     * 这里进行不同点击事件的回调处理
      */
-    public static Bitmap zoom(@NonNull Bitmap originalBitmap, int newWidth) {
-        // 获得图片的宽高
-        int width = originalBitmap.getWidth();
-        int height = originalBitmap.getHeight();
+    public void onClick(View view, int x, int y, UrlImageSpan imageSpan, boolean isDown) {
+        if (onCloseImageSpanClickListener == null) {
+            return;
+        }
 
-        // 计算缩放比例
-        float scale = ((float) newWidth) / width;
+        if (closeRect != null && closeRect.contains(x, y)) {
+            onCloseImageSpanClickListener.onClose(this);
+        } else {
+            if (isDown) {
+                onCloseImageSpanClickListener.onImageDown(imageSpan);
+            } else {
+                onCloseImageSpanClickListener.onImageUp(imageSpan);
+            }
+        }
+    }
 
-        // 取得想要缩放的matrix参数
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
+    public void bindCloseBitmap(Bitmap closeBitmap,  float closeIconMarginTop, float closeIconMarginRight){
+        this.closeBitmap = closeBitmap;
+        this.closeIconMarginTop = closeIconMarginTop;
+        this.closeIconMarginRight = closeIconMarginRight;
+    }
 
-        // 得到新的图片
-        return Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, true);
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
+
+    /**
+     * 设置点击事件回调
+     *
+     * @param onCloseImageSpanClickListener 击事件回调
+     */
+    public void setOnCloseImageSpanClickListener(OnCloseImageSpanClickListener onCloseImageSpanClickListener) {
+        this.onCloseImageSpanClickListener = onCloseImageSpanClickListener;
+    }
+
+    public interface OnCloseImageSpanClickListener {
+
+        /**
+         * 点击图片-按下
+         */
+        void onImageDown(UrlImageSpan imageSpan);
+
+        /**
+         * 点击图片-抬起
+         */
+        void onImageUp(UrlImageSpan imageSpan);
+
+        /**
+         * 点击关闭按钮
+         */
+        void onClose(UrlImageSpan closeImageSpan);
     }
 }
 

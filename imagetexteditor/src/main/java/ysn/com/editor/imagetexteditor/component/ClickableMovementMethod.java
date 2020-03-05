@@ -8,7 +8,7 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import ysn.com.editor.imagetexteditor.span.CloseImageSpan;
+import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
 
 /**
  * @Author yangsanning
@@ -19,13 +19,17 @@ import ysn.com.editor.imagetexteditor.span.CloseImageSpan;
  */
 public class ClickableMovementMethod extends LinkMovementMethod {
 
-    private static ClickableMovementMethod sInstance;
+    private static ClickableMovementMethod instance;
 
     public static ClickableMovementMethod get() {
-        if (sInstance == null) {
-            sInstance = new ClickableMovementMethod();
+        if (instance == null) {
+            synchronized (ClickableMovementMethod.class) {
+                if (instance == null) {
+                    instance = new ClickableMovementMethod();
+                }
+            }
         }
-        return sInstance;
+        return instance;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class ClickableMovementMethod extends LinkMovementMethod {
             int off = layout.getOffsetForHorizontal(line, x);
 
             ClickableSpan[] clickableSpans = buffer.getSpans(off, off, ClickableSpan.class);
-            CloseImageSpan[] imageSpans = buffer.getSpans(off, off, CloseImageSpan.class);
+            UrlImageSpan[] imageSpans = buffer.getSpans(off, off, UrlImageSpan.class);
 
             if (clickableSpans.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
@@ -56,7 +60,7 @@ public class ClickableMovementMethod extends LinkMovementMethod {
                     Selection.setSelection(buffer, buffer.getSpanStart(clickableSpans[0]), buffer.getSpanEnd(clickableSpans[0]));
                 }
                 return true;
-            } else if (imageSpans.length != 0 ) {
+            } else if (imageSpans.length != 0) {
                 imageSpans[0].onClick(textView, x, y, imageSpans[0], action == MotionEvent.ACTION_DOWN);
                 return true;
             } else {
