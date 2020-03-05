@@ -269,6 +269,10 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
         this.imageWidth = imageWidth;
     }
 
+    public int getImageWidth() {
+        return imageWidth == 0 ? getWidth() : imageWidth;
+    }
+
     public void setLoadingDrawableHeight(int loadingDrawableHeight) {
         this.loadingDrawableHeight = loadingDrawableHeight;
     }
@@ -278,7 +282,7 @@ public class EditorEditText extends EditTextWithScrollView implements UrlImageSp
             return;
         }
         Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(closeIconRes), closeIconWidth, closeIconHeight);
-        UrlImageSpan urlImageSpan = new UrlImageSpan(new LoadingDrawable(imageWidth, loadingDrawableHeight), imageUrl, imageWidth, this);
+        UrlImageSpan urlImageSpan = new UrlImageSpan(new LoadingDrawable(getImageWidth(), loadingDrawableHeight), imageUrl, getImageWidth(), this);
         urlImageSpan.bindCloseBitmap(closeBitmap, closeIconMarginTop, closeIconMarginRight);
         urlImageSpan.setOnCloseImageSpanClickListener(this);
         SpannableStringBuilder style = getStyle();

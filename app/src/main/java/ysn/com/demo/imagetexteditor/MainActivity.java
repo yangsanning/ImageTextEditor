@@ -29,7 +29,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         editorEditView = findViewById(R.id.main_activity_text);
-        editorEditView.setImageWidth(DeviceUtils.getScreenWidth(MainActivity.this) - editorEditView.getPaddingStart() - editorEditView.getPaddingEnd());
+        View editorLayout = findViewById(R.id.main_activity_editor_layout);
+        editorEditView.setImageWidth(
+                DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd()
+        );
 
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
