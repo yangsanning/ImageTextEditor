@@ -8,7 +8,7 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
+import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
 
 /**
  * @Author yangsanning
@@ -51,7 +51,7 @@ public class ClickableMovementMethod extends LinkMovementMethod {
             int off = layout.getOffsetForHorizontal(line, x);
 
             ClickableSpan[] clickableSpans = buffer.getSpans(off, off, ClickableSpan.class);
-            UrlImageSpan[] imageSpans = buffer.getSpans(off, off, UrlImageSpan.class);
+            EditorImageSpan[] imageSpans = buffer.getSpans(off, off, EditorImageSpan.class);
 
             if (clickableSpans.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {

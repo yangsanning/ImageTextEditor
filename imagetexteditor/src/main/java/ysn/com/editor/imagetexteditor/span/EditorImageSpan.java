@@ -4,32 +4,22 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.view.View;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-
-import java.lang.reflect.Field;
 
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
-import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 
 /**
  * @Author yangsanning
- * @ClassName UrlImageSpan
- * @Description 一句话概括作用
+ * @ClassName EditorImageSpan
+ * @Description 编辑器专用 ImageSpan
  * @Date 2020/3/4
  * @History 2020/3/4 author: description:
  */
 
-public class UrlImageSpan extends ImageSpan implements IEditorSpan {
+public class EditorImageSpan extends ImageSpan implements IEditorSpan {
 
     /**
      * marginTop:   关闭图标的上边距
@@ -38,25 +28,20 @@ public class UrlImageSpan extends ImageSpan implements IEditorSpan {
     private float closeIconMarginTop;
     private float closeIconMarginRight;
 
-    private boolean isInit;
-    private boolean isSelect;
-
     private Bitmap closeBitmap;
     private Rect closeRect;
 
     private String sourceText;
     private String imageUrl;
-    private int imageWidth;
-    private TextView textView;
 
-    private boolean icDownload;
+    private boolean isInit;
+    private boolean isSelect;
+
     private OnCloseImageSpanClickListener onCloseImageSpanClickListener;
 
-    public UrlImageSpan(@NonNull Drawable drawable, String imageUrl, int imageWidth, TextView textView) {
+    public EditorImageSpan(@NonNull Drawable drawable, String imageUrl) {
         super(drawable);
         this.imageUrl = imageUrl;
-        this.imageWidth = imageWidth;
-        this.textView = textView;
     }
 
     @Override
@@ -103,43 +88,11 @@ public class UrlImageSpan extends ImageSpan implements IEditorSpan {
         isInit = true;
     }
 
-    @Override
-    public Drawable getDrawable() {
-        if (!icDownload) {
-            Glide.with(textView.getContext()).load(imageUrl).asBitmap().into(new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(textView.getContext().getResources(), ImageUtils.zoom(resource, imageWidth));
-                    bitmapDrawable.setBounds(0, 0, bitmapDrawable.getIntrinsicWidth(), bitmapDrawable.getIntrinsicHeight());
-
-                    Field mDrawable;
-                    Field mDrawableRef;
-                    try {
-                        mDrawable = ImageSpan.class.getDeclaredField("mDrawable");
-                        mDrawable.setAccessible(true);
-                        mDrawable.set(UrlImageSpan.this, bitmapDrawable);
-
-                        mDrawableRef = DynamicDrawableSpan.class.getDeclaredField("mDrawableRef");
-                        mDrawableRef.setAccessible(true);
-                        mDrawableRef.set(UrlImageSpan.this, null);
-
-                        icDownload = true;
-                        textView.setText(textView.getText());
-                    } catch (IllegalAccessException | NoSuchFieldException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-        return super.getDrawable();
-    }
-
     /**
      * 提供给{@link ClickableMovementMethod}使用的点击事件
      * 这里进行不同点击事件的回调处理
      */
-    public void onClick(View view, int x, int y, UrlImageSpan imageSpan, boolean isDown) {
+    public void onClick(View view, int x, int y, EditorImageSpan imageSpan, boolean isDown) {
         if (onCloseImageSpanClickListener == null) {
             return;
         }
@@ -183,17 +136,17 @@ public class UrlImageSpan extends ImageSpan implements IEditorSpan {
         /**
          * 点击图片-按下
          */
-        void onImageDown(UrlImageSpan imageSpan);
+        void onImageDown(EditorImageSpan imageSpan);
 
         /**
          * 点击图片-抬起
          */
-        void onImageUp(UrlImageSpan imageSpan);
+        void onImageUp(EditorImageSpan imageSpan);
 
         /**
          * 点击关闭按钮
          */
-        void onClose(UrlImageSpan closeImageSpan);
+        void onClose(EditorImageSpan closeImageSpan);
     }
 }
 

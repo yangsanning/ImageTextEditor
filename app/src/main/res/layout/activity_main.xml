@@ -54,7 +54,7 @@
         android:background="#e6e6e6">
 
         <TextView
-            android:id="@+id/test"
+            android:id="@+id/main_activity_jack_photos"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"

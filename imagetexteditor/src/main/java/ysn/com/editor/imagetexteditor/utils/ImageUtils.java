@@ -1,6 +1,7 @@
 package ysn.com.editor.imagetexteditor.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
@@ -52,5 +53,12 @@ public class ImageUtils {
 
         // 得到新的图片
         return Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, true);
+    }
+
+    /**
+     * 根据图片路径获取 Bitmap
+     */
+    public static Bitmap getBitmap(String imagePath) {
+        return BitmapFactory.decodeFile(imagePath, new BitmapFactory.Options());
     }
 }
