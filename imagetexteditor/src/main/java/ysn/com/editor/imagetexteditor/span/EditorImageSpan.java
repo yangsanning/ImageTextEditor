@@ -146,7 +146,7 @@ public class EditorImageSpan extends ImageSpan implements IEditorSpan {
         /**
          * 点击关闭按钮
          */
-        void onClose(EditorImageSpan closeImageSpan);
+        void onClose(EditorImageSpan imageSpan);
     }
 }
 
