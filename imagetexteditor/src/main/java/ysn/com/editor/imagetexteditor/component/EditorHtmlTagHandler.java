@@ -11,8 +11,7 @@ import org.xml.sax.XMLReader;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import ysn.com.editor.imagetexteditor.component.LoadingDrawable;
-import ysn.com.editor.imagetexteditor.span.UrlImageSpan;
+import ysn.com.editor.imagetexteditor.span.ReadImageSpan;
 
 /**
  * @Author yangsanning
@@ -62,8 +61,8 @@ public class EditorHtmlTagHandler implements Html.TagHandler {
         String url = output.subSequence(startIndex, stopIndex).toString();
 
         LoadingDrawable loadingDrawable = new LoadingDrawable(imageWidth, 600);
-        UrlImageSpan urlImageSpan = new UrlImageSpan(loadingDrawable, url, imageWidth, textView);
-        output.setSpan(urlImageSpan, startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ReadImageSpan readImageSpan = new ReadImageSpan(textView, loadingDrawable, url, imageWidth);
+        output.setSpan(readImageSpan, startIndex, stopIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void processAttributes(final XMLReader xmlReader) {
