@@ -39,7 +39,7 @@
                 android:hint="请输入标题" />
 
             <ysn.com.editor.imagetexteditor.EditorEditText
-                android:id="@+id/main_activity_text"
+                android:id="@+id/main_activity_editor_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start"
@@ -51,12 +51,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#e6e6e6">
+        android:background="#e6e6e6"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/main_activity_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="插入文本" />
 
         <TextView
             android:id="@+id/main_activity_jack_photos"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"

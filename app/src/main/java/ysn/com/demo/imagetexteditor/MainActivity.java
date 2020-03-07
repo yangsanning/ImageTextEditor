@@ -32,14 +32,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        editorEditView = findViewById(R.id.main_activity_text);
+        editorEditView = findViewById(R.id.main_activity_editor_edit_text);
         View editorLayout = findViewById(R.id.main_activity_editor_layout);
         editorEditView.setImageTargetWidth(
                 DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd()
         );
 
-        findViewById(R.id.main_activity_jack_photos).setOnClickListener(this);
         findViewById(R.id.main_activity_preview).setOnClickListener(this);
+        findViewById(R.id.main_activity_text).setOnClickListener(this);
+        findViewById(R.id.main_activity_jack_photos).setOnClickListener(this);
 
         checkPermission();
     }
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setMaxSelectCount(9)
                         // 打开相册
                         .start(this, PAGE_REQUEST_CODE_JACK_PHOTOS);
+                break;
+            case R.id.main_activity_text:
+                editorEditView.addText("润达医疗(603108)");
                 break;
             case R.id.main_activity_preview:
                 String data = editorEditView.getEditTexts();

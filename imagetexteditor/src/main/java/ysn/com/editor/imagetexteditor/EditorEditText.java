@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
+import ysn.com.editor.imagetexteditor.span.TextSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
@@ -280,6 +281,21 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
 
     public int getImageTargetWidth() {
         return imageTargetWidth == 0 ? getWidth() : imageTargetWidth;
+    }
+
+    /**
+     * 添加文字
+     */
+    public void addText(String text) {
+        if (!hasFocus()) {
+            return;
+        }
+        int selEnd = selStart + text.length();
+        SpannableStringBuilder style = getStyle();
+        style.insert(selStart, text);
+        style.setSpan(new TextSpan(text), selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        setText(style);
+        setSelection(selEnd);
     }
 
     /**
