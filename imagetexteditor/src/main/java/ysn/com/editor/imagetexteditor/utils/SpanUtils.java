@@ -3,7 +3,7 @@ package ysn.com.editor.imagetexteditor.utils;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 
-import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
+import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 
 /**
  * @Author yangsanning
@@ -16,14 +16,12 @@ public class SpanUtils {
 
     public static String getEditTexts(Editable text) {
         SpannableStringBuilder builder = new SpannableStringBuilder(text);
-        EditorImageSpan[] spans = builder.getSpans(0, builder.length(), EditorImageSpan.class);
-        for (int i = spans.length - 1; i >= 0; i--) {
-            EditorImageSpan span = spans[i];
-            int start = builder.getSpanStart(span);
-            int end = builder.getSpanEnd(span);
-            builder.insert(end, span.getEndTag());
-            builder.replace(start, start + 1, span.getImageUrl());
-            builder.insert(start, span.getStartTag());
+        IEditorSpan[] editorSpans = builder.getSpans(0, builder.length(), IEditorSpan.class);
+        for (int i = editorSpans.length - 1; i >= 0; i--) {
+            IEditorSpan editorSpan = editorSpans[i];
+            int start = builder.getSpanStart(editorSpan);
+            int end = builder.getSpanEnd(editorSpan);
+            builder.replace(start, end, editorSpan.getResult());
         }
         return builder.toString();
     }

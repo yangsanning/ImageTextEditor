@@ -17,6 +17,7 @@ import android.view.View;
 public class TextSpan extends ClickableSpan implements IEditorSpan {
 
     private String text;
+    private String result;
 
     public TextSpan(String text) {
         this.text = text;
@@ -33,12 +34,17 @@ public class TextSpan extends ClickableSpan implements IEditorSpan {
     }
 
     @Override
-    public String getText() {
+    public String getShowText() {
         return text;
     }
 
     @Override
-    public int length() {
+    public String getResult() {
+        return result == null ? (result = getStartTag() + text + getEndTag()) : result;
+    }
+
+    @Override
+    public int getShowTextLength() {
         return TextUtils.isEmpty(text) ? 0 : text.length();
     }
 

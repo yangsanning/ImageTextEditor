@@ -31,8 +31,10 @@ public class EditorImageSpan extends ImageSpan implements IEditorSpan {
     private Bitmap closeBitmap;
     private Rect closeRect;
 
-    private String sourceText;
+    private String result;
     private String imageUrl;
+
+    private String showText = "[图片]";
 
     private boolean isInit;
     private boolean isSelect;
@@ -55,13 +57,18 @@ public class EditorImageSpan extends ImageSpan implements IEditorSpan {
     }
 
     @Override
-    public String getText() {
-        return sourceText == null ? (sourceText = (getStartTag() + imageUrl + getEndTag())) : sourceText;
+    public String getShowText() {
+        return showText;
     }
 
     @Override
-    public int length() {
-        return this.getText() == null ? 0 : sourceText.length();
+    public int getShowTextLength() {
+        return showText.length();
+    }
+
+    @Override
+    public String getResult() {
+        return result == null ? (result = (getStartTag() + imageUrl + getEndTag())) : result;
     }
 
     /**

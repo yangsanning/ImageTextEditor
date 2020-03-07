@@ -24,16 +24,23 @@ public interface IEditorSpan {
     String getEndTag();
 
     /**
-     * 获取源文本（带标签）
+     * 获取在编辑器展示的文本
      *
-     * @return 源文本（带标签）
+     * @return 在编辑器展示的文本
      */
-    String getText();
+    String getShowText();
 
     /**
-     * 获取源文本长度
+     * 获取在编辑器展示的文本长度
      *
-     * @return 源文本长度
+     * @return 在编辑器展示的文本长度
      */
-    int length();
+    int getShowTextLength();
+
+    /**
+     * 获取带有标签的文本（即编辑后的结果）
+     *
+     * @return 带有标签的文本（即编辑后的结果）
+     */
+    String getResult();
 }
