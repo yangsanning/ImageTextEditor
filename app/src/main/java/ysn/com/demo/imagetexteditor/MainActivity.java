@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ysn.com.editor.imagetexteditor.EditorEditText;
+import ysn.com.editor.imagetexteditor.ImageTextEditor;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.jackphotos.JackPhotos;
 
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PAGE_REQUEST_CODE_JACK_PHOTOS = 2020;
     private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL = 0x00000012;
 
-    private EditorEditText editorEditView;
+    private ImageTextEditor editorEditView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

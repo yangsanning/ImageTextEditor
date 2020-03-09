@@ -33,7 +33,7 @@ import ysn.com.editor.imagetexteditor.utils.SpanUtils;
  * @Date 2020/2/26
  * @History 2020/2/26 author: description:
  */
-public class EditorEditText extends EditTextWithScrollView implements EditorImageSpan.OnCloseImageSpanClickListener {
+public class ImageTextEditor extends EditTextWithScrollView implements EditorImageSpan.OnCloseImageSpanClickListener {
 
     private static final String STRING_LINE_FEED = "\n";
 
@@ -56,24 +56,24 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
     private int selStart, selEnd;
     private EditorImageSpan lastImageSpan;
 
-    public EditorEditText(Context context) {
+    public ImageTextEditor(Context context) {
         this(context, null);
     }
 
-    public EditorEditText(Context context, AttributeSet attrs) {
+    public ImageTextEditor(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EditorEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ImageTextEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.EditorEditText);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ImageTextEditor);
 
-        closeIconRes = typedArray.getResourceId(R.styleable.EditorEditText_eet_close_icon, R.drawable.editor_ic_close);
-        closeIconWidth = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_width, 60);
-        closeIconHeight = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_height, 60);
-        closeIconMarginTop = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_margin_top, 30);
-        closeIconMarginRight = typedArray.getDimensionPixelSize(R.styleable.EditorEditText_eet_close_icon_margin_right, 30);
+        closeIconRes = typedArray.getResourceId(R.styleable.ImageTextEditor_ite_close_icon, R.drawable.editor_ic_close);
+        closeIconWidth = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_width, 60);
+        closeIconHeight = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_height, 60);
+        closeIconMarginTop = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_margin_top, 30);
+        closeIconMarginRight = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_margin_right, 30);
 
         typedArray.recycle();
     }

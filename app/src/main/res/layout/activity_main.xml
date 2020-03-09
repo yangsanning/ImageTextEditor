@@ -38,13 +38,13 @@
                 android:enabled="false"
                 android:hint="请输入标题" />
 
-            <ysn.com.editor.imagetexteditor.EditorEditText
+            <ysn.com.editor.imagetexteditor.ImageTextEditor
                 android:id="@+id/main_activity_editor_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start"
                 android:paddingTop="16dp"
-                app:eet_close_icon_margin_top="@dimen/eet_close_icon_margin_top" />
+                app:ite_close_icon_margin_top="@dimen/eet_close_icon_margin_top" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
