@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -97,10 +96,47 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
 
         Editable text = getText();
 
+        // 处理 IEditorSpan 的焦点事件
+        if (delaIEditorSpanSelection(text)) {
+            return;
+        }
+
         // 处理 EditorImageSpan 选中与非选中状态
         dealEditorImageSpan(text);
 
         super.onSelectionChanged(selStart, selEnd);
+    }
+
+    /**
+     * 处理 IEditorSpan 的焦点事件
+     *
+     * @return true 为时间已处理, false 时间未处理
+     */
+    private boolean delaIEditorSpanSelection(Editable text) {
+        IEditorSpan[] editorSpans = SpanUtils.getEditorSpans(text);
+        for (IEditorSpan editorSpan : editorSpans) {
+            int spanStart = getSpanStart(text, editorSpan);
+            int spanEnd = getSpanEnd(text, editorSpan);
+
+            if (selStart == selEnd) {
+                if (selStart > spanStart && selStart < spanEnd) {
+                    // 如果点击偏前面则移动焦点移动到前面, 反之则移动到后面
+                    setSelection(((selStart - spanStart) > (spanEnd - selStart)) ? spanEnd : spanStart);
+                    return true;
+                }
+            } else if (selEnd > spanStart && selEnd < spanEnd) {
+                if (selStart < spanStart) {
+                    setSelection(selStart, spanStart);
+                } else {
+                    setSelection(spanStart, spanEnd);
+                }
+                return true;
+            } else if (selStart > spanStart && selStart < spanEnd) {
+                setSelection(spanStart, Math.max(selEnd, spanEnd));
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -248,7 +284,11 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
         return new SpannableStringBuilder(getText());
     }
 
-    private int getSpanEnd(Editable text, ImageSpan span) {
+    private int getSpanStart(Editable text, IEditorSpan span) {
+        return text.getSpanStart(span);
+    }
+
+    private int getSpanEnd(Editable text, IEditorSpan span) {
         return text.getSpanEnd(span);
     }
 

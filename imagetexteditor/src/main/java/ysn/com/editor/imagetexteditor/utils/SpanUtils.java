@@ -25,4 +25,8 @@ public class SpanUtils {
         }
         return builder.toString();
     }
+
+    public static IEditorSpan[] getEditorSpans(Editable text) {
+        return text.getSpans(0, text.length(), IEditorSpan.class);
+    }
 }
