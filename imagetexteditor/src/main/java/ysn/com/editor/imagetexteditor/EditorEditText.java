@@ -21,7 +21,6 @@ import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
-import ysn.com.editor.imagetexteditor.span.TextSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
@@ -387,7 +386,7 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
         SpannableStringBuilder style = getStyle();
         String showText = iEditorSpan.getShowText();
         style.insert(selStart, showText);
-        style.setSpan(new TextSpan(showText), selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        style.setSpan(iEditorSpan, selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         setText(style);
         setSelection(selEnd);
     }

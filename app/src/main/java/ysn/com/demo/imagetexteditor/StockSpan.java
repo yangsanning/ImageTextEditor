@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.span;
+package ysn.com.demo.imagetexteditor;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -7,25 +7,29 @@ import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import ysn.com.editor.imagetexteditor.span.IEditorSpan;
+
 /**
  * @Author yangsanning
- * @ClassName TextSpan
- * @Description 一句话概括作用
+ * @ClassName StockSpan
+ * @Description 自定义的 Span, 用于演示
  * @Date 2020/3/6
  * @History 2020/3/6 author: description:
  */
-public class TextSpan extends ClickableSpan implements IEditorSpan {
+public class StockSpan extends ClickableSpan implements IEditorSpan {
 
-    private String text;
+    private String showText;
+    private String startTag;
     private String result;
 
-    public TextSpan(String text) {
-        this.text = text;
+    public StockSpan(String stockName, String stockCode) {
+        showText = stockName + "(" + stockCode + ")";
+        startTag = String.format("<a href=\"jiangjun://stockDetails?name=%s&amp;code=%s\">", stockName, stockCode);
     }
 
     @Override
     public String getStartTag() {
-        return "<a href=\"jiangjun://stockDetails?name=润达医疗&amp;code=603108\">";
+        return startTag;
     }
 
     @Override
@@ -35,17 +39,17 @@ public class TextSpan extends ClickableSpan implements IEditorSpan {
 
     @Override
     public String getShowText() {
-        return text;
+        return showText;
     }
 
     @Override
     public String getResult() {
-        return result == null ? (result = getStartTag() + text + getEndTag()) : result;
+        return result == null ? (result = getStartTag() + showText + getEndTag()) : result;
     }
 
     @Override
     public int getShowTextLength() {
-        return TextUtils.isEmpty(text) ? 0 : text.length();
+        return TextUtils.isEmpty(showText) ? 0 : showText.length();
     }
 
     @Override

@@ -16,7 +16,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ysn.com.editor.imagetexteditor.EditorEditText;
-import ysn.com.editor.imagetexteditor.span.TextSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.jackphotos.JackPhotos;
 
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .start(this, PAGE_REQUEST_CODE_JACK_PHOTOS);
                 break;
             case R.id.main_activity_text:
-                editorEditView.addEditorSpan(new TextSpan("润达医疗(603108)"));
+                editorEditView.addEditorSpan(new StockSpan(("润达医疗"), ("603108")));
                 break;
             case R.id.main_activity_preview:
                 String data = editorEditView.getEditTexts();
