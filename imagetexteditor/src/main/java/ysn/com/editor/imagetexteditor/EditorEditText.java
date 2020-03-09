@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -52,6 +53,7 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
     private float closeIconMarginRight;
     private int imageTargetWidth = 800;
 
+    private boolean isDelete;
     private int selStart, selEnd;
     private EditorImageSpan lastImageSpan;
 
@@ -89,6 +91,11 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
 
     @Override
     protected void onSelectionChanged(int selStart, int selEnd) {
+        if (isDelete) {
+            isDelete = false;
+            setSelection(this.selStart);
+            return;
+        }
         this.selStart = selStart;
         this.selEnd = selEnd;
 
@@ -97,58 +104,14 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
         Editable text = getText();
 
         // 处理 IEditorSpan 的焦点事件
-        if (delaIEditorSpanSelection(text)) {
+        if (delaEditorSpanSelection(text)) {
             return;
         }
 
         // 处理 EditorImageSpan 选中与非选中状态
-        dealEditorImageSpan(text);
+        dealEditorImageSpanSelection(text);
 
         super.onSelectionChanged(selStart, selEnd);
-    }
-
-    /**
-     * 处理 IEditorSpan 的焦点事件
-     *
-     * @return true 为时间已处理, false 时间未处理
-     */
-    private boolean delaIEditorSpanSelection(Editable text) {
-        IEditorSpan[] editorSpans = SpanUtils.getEditorSpans(text);
-        for (IEditorSpan editorSpan : editorSpans) {
-            int spanStart = getSpanStart(text, editorSpan);
-            int spanEnd = getSpanEnd(text, editorSpan);
-
-            if (selStart == selEnd) {
-                if (selStart > spanStart && selStart < spanEnd) {
-                    // 如果点击偏前面则移动焦点移动到前面, 反之则移动到后面
-                    setSelection(((selStart - spanStart) > (spanEnd - selStart)) ? spanEnd : spanStart);
-                    return true;
-                }
-            } else if (selEnd > spanStart && selEnd < spanEnd) {
-                if (selStart < spanStart) {
-                    setSelection(selStart, spanStart);
-                } else {
-                    setSelection(spanStart, spanEnd);
-                }
-                return true;
-            } else if (selStart > spanStart && selStart < spanEnd) {
-                setSelection(spanStart, Math.max(selEnd, spanEnd));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 处理{@link EditorImageSpan} 选中与非选中状态
-     */
-    private void dealEditorImageSpan(Editable text) {
-        EditorImageSpan[] editorImageSpans = text.getSpans(selStart - 1, selStart, EditorImageSpan.class);
-        if (editorImageSpans.length > 0) {
-            selectImageSpan(text, editorImageSpans[0]);
-        } else {
-            unSelectImageSpan(text);
-        }
     }
 
     /**
@@ -158,13 +121,28 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
     public boolean dispatchKeyEvent(KeyEvent event) {
         LogUtils.d("dispatchKeyEvent");
         if (event.getKeyCode() == KeyEvent.KEYCODE_DEL && event.getAction() != KeyEvent.ACTION_UP) {
-            if (selStart == selEnd) {
-                Editable text = getText();
-                EditorImageSpan[] imageSpans = text.getSpans(selStart - 2, selStart, EditorImageSpan.class);
-                if (imageSpans.length > 0) {
-                    selectImageSpan(text, imageSpans[0]);
-                    hideSoftInput();
-                    return true;
+            Editable text = getText();
+            if (!TextUtils.isEmpty(text)) {
+                if (selStart == selEnd) {
+                    EditorImageSpan[] editorImageSpans = SpanUtils.getEditorImageSpans(text, (selStart - 2), selStart);
+                    if (editorImageSpans.length > 0) {
+                        selectImageSpan(text, editorImageSpans[0]);
+                        hideSoftInput();
+                        return true;
+                    }
+
+                    IEditorSpan[] editorSpans = SpanUtils.getEditorSpans(text, (selStart - 1), selStart);
+                    if (editorSpans.length > 0) {
+                        IEditorSpan editorSpan = editorSpans[0];
+                        selStart = text.getSpanStart(editorSpan);
+                        isDelete = true;
+                        SpannableStringBuilder style = new SpannableStringBuilder(getText());
+                        SpannableStringBuilder newStyle = new SpannableStringBuilder();
+                        newStyle.append(style.subSequence(0, getText().getSpanStart(editorSpan)));
+                        newStyle.append(style.subSequence(getSpanEnd(text, editorSpan), getText().length()));
+                        setText(newStyle);
+                        return true;
+                    }
                 }
             }
         }
@@ -218,6 +196,53 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
     }
 
     /****************************************************  私有方法  **********************************************/
+
+    /**
+     * 处理 IEditorSpan 的焦点事件
+     *
+     * @return true 为时间已处理, false 时间未处理
+     */
+    private boolean delaEditorSpanSelection(Editable text) {
+        IEditorSpan[] editorSpans = SpanUtils.getEditorSpans(text);
+        for (IEditorSpan editorSpan : editorSpans) {
+            int spanStart = getSpanStart(text, editorSpan);
+            int spanEnd = getSpanEnd(text, editorSpan);
+
+            if (selStart == selEnd) {
+                if (selStart > spanStart && selStart < spanEnd) {
+                    // 如果点击偏前面则移动焦点移动到前面, 反之则移动到后面
+                    setSelection(((selStart - spanStart) > (spanEnd - selStart)) ? spanEnd : spanStart);
+                    return true;
+                }
+            } else if (selEnd > spanStart && selEnd < spanEnd) {
+                if (selStart < spanStart) {
+                    setSelection(selStart, spanStart);
+                } else {
+                    setSelection(spanStart, spanEnd);
+                }
+                return true;
+            } else if (selStart > spanStart && selStart < spanEnd) {
+                setSelection(spanStart, Math.max(selEnd, spanEnd));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 处理{@link EditorImageSpan} 选中与非选中状态
+     */
+    private void dealEditorImageSpanSelection(Editable text) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
+        EditorImageSpan[] editorImageSpans = SpanUtils.getEditorImageSpans(text, (selStart - 1), selStart);
+        if (editorImageSpans.length > 0) {
+            selectImageSpan(text, editorImageSpans[0]);
+        } else {
+            unSelectImageSpan(text);
+        }
+    }
 
     private void selectImageSpan(Editable text, EditorImageSpan imageSpan) {
         lastImageSpan = imageSpan;
