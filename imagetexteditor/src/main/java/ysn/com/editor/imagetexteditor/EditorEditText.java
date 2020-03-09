@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
+import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.TextSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
@@ -285,21 +286,6 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
     }
 
     /**
-     * 添加文字
-     */
-    public void addText(String text) {
-        if (!hasFocus()) {
-            return;
-        }
-        int selEnd = selStart + text.length();
-        SpannableStringBuilder style = getStyle();
-        style.insert(selStart, text);
-        style.setSpan(new TextSpan(text), selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        setText(style);
-        setSelection(selEnd);
-    }
-
-    /**
      * 添加图片
      *
      * @param imagePath 图片路径
@@ -321,6 +307,24 @@ public class EditorEditText extends EditTextWithScrollView implements EditorImag
         setSelection(end + 1);
 
         setMovementMethod(ClickableMovementMethod.get());
+    }
+
+    /**
+     * 添加自定义 Span
+     *
+     * @param iEditorSpan 实现了{@link IEditorSpan} 的Span
+     */
+    public void addEditorSpan(IEditorSpan iEditorSpan) {
+        if (!hasFocus()) {
+            return;
+        }
+        int selEnd = selStart + iEditorSpan.getShowTextLength();
+        SpannableStringBuilder style = getStyle();
+        String showText = iEditorSpan.getShowText();
+        style.insert(selStart, showText);
+        style.setSpan(new TextSpan(showText), selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        setText(style);
+        setSelection(selEnd);
     }
 
     public String getEditTexts() {
