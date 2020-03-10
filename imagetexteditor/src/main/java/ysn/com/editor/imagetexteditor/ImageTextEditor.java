@@ -1,10 +1,6 @@
 package ysn.com.editor.imagetexteditor;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -19,10 +15,9 @@ import java.lang.reflect.Method;
 
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
-import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
+import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
-import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
 import ysn.com.editor.imagetexteditor.utils.SpanUtils;
 
@@ -33,28 +28,13 @@ import ysn.com.editor.imagetexteditor.utils.SpanUtils;
  * @Date 2020/2/26
  * @History 2020/2/26 author: description:
  */
-public class ImageTextEditor extends EditTextWithScrollView implements EditorImageSpan.OnCloseImageSpanClickListener {
+public class ImageTextEditor extends EditTextWithScrollView implements BaseCloseImageSpan.OnCloseImageSpanClickListener {
 
     private static final String STRING_LINE_FEED = "\n";
 
-    /**
-     * closeIconRes:          关闭按钮的资源id
-     * closeIconWidth:        关闭按钮的宽
-     * closeIconHeight:       关闭按钮的高
-     * closeIconMarginTop:    关闭图标的上边距
-     * closeIconMarginRight:  关闭图标的右边距
-     * imageWidth:            图片宽度
-     */
-    private int closeIconRes;
-    private int closeIconWidth;
-    private int closeIconHeight;
-    private float closeIconMarginTop;
-    private float closeIconMarginRight;
-    private int imageTargetWidth = 800;
-
     private boolean isDelete;
     private int selStart, selEnd;
-    private EditorImageSpan lastImageSpan;
+    private BaseCloseImageSpan lastCloseImageSpan;
 
     public ImageTextEditor(Context context) {
         this(context, null);
@@ -66,16 +46,6 @@ public class ImageTextEditor extends EditTextWithScrollView implements EditorIma
 
     public ImageTextEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ImageTextEditor);
-
-        closeIconRes = typedArray.getResourceId(R.styleable.ImageTextEditor_ite_close_icon, R.drawable.editor_ic_close);
-        closeIconWidth = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_width, 60);
-        closeIconHeight = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_height, 60);
-        closeIconMarginTop = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_margin_top, 30);
-        closeIconMarginRight = typedArray.getDimensionPixelSize(R.styleable.ImageTextEditor_ite_close_icon_margin_right, 30);
-
-        typedArray.recycle();
     }
 
     @Override
@@ -108,7 +78,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements EditorIma
         }
 
         // 处理 EditorImageSpan 选中与非选中状态
-        dealEditorImageSpanSelection(text);
+        dealCloseImageSpanSelection(text);
 
         super.onSelectionChanged(selStart, selEnd);
     }
@@ -123,9 +93,9 @@ public class ImageTextEditor extends EditTextWithScrollView implements EditorIma
             Editable text = getText();
             if (!TextUtils.isEmpty(text)) {
                 if (selStart == selEnd) {
-                    EditorImageSpan[] editorImageSpans = SpanUtils.getEditorImageSpans(text, (selStart - 2), selStart);
-                    if (editorImageSpans.length > 0) {
-                        selectImageSpan(text, editorImageSpans[0]);
+                    BaseCloseImageSpan[] closeImageSpans = SpanUtils.getCloseImageSpans(text, (selStart - 2), selStart);
+                    if (closeImageSpans.length > 0) {
+                        selectImageSpan(text, closeImageSpans[0]);
                         hideSoftInput();
                         return true;
                     }
@@ -163,33 +133,33 @@ public class ImageTextEditor extends EditTextWithScrollView implements EditorIma
     }
 
     /**
-     * 点击{@link EditorImageSpan#onClick(View, int, int, EditorImageSpan, boolean)}图片-按下
+     * 点击{@link BaseCloseImageSpan#onClick(View, int, int, BaseCloseImageSpan, boolean)}图片-按下
      */
     @Override
-    public void onImageDown(EditorImageSpan imageSpan) {
+    public void onImageDown(BaseCloseImageSpan closeImageSpan) {
         setInputVisible(bFalse());
     }
 
     /**
-     * 点击@link UrlImageSpan#onClick(View, int, int, UrlImageSpan, boolean)}图片-抬起
+     * 点击{@link BaseCloseImageSpan#onClick(View, int, int, BaseCloseImageSpan, boolean)}图片-抬起
      */
     @Override
-    public void onImageUp(EditorImageSpan imageSpan) {
+    public void onImageUp(BaseCloseImageSpan closeImageSpan) {
         unSelectImageSpan(getText());
-        selectImageSpan(getText(), imageSpan);
+        selectImageSpan(getText(), closeImageSpan);
         hideSoftInput();
     }
 
     /**
-     * 点击{@link EditorImageSpan#onClick(View, int, int, EditorImageSpan, boolean)}关闭按钮
+     * 点击{@link BaseCloseImageSpan#onClick(View, int, int, BaseCloseImageSpan, boolean)}关闭按钮
      */
     @Override
-    public void onClose(final EditorImageSpan imageSpan) {
-        lastImageSpan = null;
+    public void onClose(final BaseCloseImageSpan closeImageSpan) {
+        lastCloseImageSpan = null;
         Editable text = getText();
-        int spanEnd = getSpanEnd(text, imageSpan);
-        text.removeSpan(imageSpan);
-        text.replace(spanEnd - imageSpan.getShowTextLength(), spanEnd, "");
+        int spanEnd = getSpanEnd(text, closeImageSpan);
+        text.removeSpan(closeImageSpan);
+        text.replace(spanEnd - closeImageSpan.getShowTextLength(), spanEnd, "");
         setText(text);
         setSelection(Math.min(spanEnd, text.length()));
     }
@@ -229,43 +199,43 @@ public class ImageTextEditor extends EditTextWithScrollView implements EditorIma
     }
 
     /**
-     * 处理{@link EditorImageSpan} 选中与非选中状态
+     * 处理{@link BaseCloseImageSpan} 选中与非选中状态
      */
-    private void dealEditorImageSpanSelection(Editable text) {
+    private void dealCloseImageSpanSelection(Editable text) {
         if (TextUtils.isEmpty(text)) {
             return;
         }
-        EditorImageSpan[] editorImageSpans = SpanUtils.getEditorImageSpans(text, (selStart - 1), selStart);
-        if (editorImageSpans.length > 0) {
-            selectImageSpan(text, editorImageSpans[0]);
+        BaseCloseImageSpan[] closeImageSpans = SpanUtils.getCloseImageSpans(text, (selStart - 1), selStart);
+        if (closeImageSpans.length > 0) {
+            selectImageSpan(text, closeImageSpans[0]);
         } else {
             unSelectImageSpan(text);
         }
     }
 
-    private void selectImageSpan(Editable text, EditorImageSpan imageSpan) {
-        lastImageSpan = imageSpan;
-        lastImageSpan.setSelect(bTrue());
+    private void selectImageSpan(Editable text, BaseCloseImageSpan closeImageSpan) {
+        lastCloseImageSpan = closeImageSpan;
+        lastCloseImageSpan.setSelect(bTrue());
         updateLastImageSpan(text);
     }
 
     private void unSelectImageSpan(Editable text) {
-        if (lastImageSpan == null) {
+        if (lastCloseImageSpan == null) {
             return;
         }
-        lastImageSpan.setSelect(bFalse());
+        lastCloseImageSpan.setSelect(bFalse());
         updateLastImageSpan(text);
-        lastImageSpan = null;
+        lastCloseImageSpan = null;
     }
 
     /**
      * 切换imageSpan
      */
     private void updateLastImageSpan(Editable text) {
-        int spanStart = text.getSpanStart(lastImageSpan);
-        int spanEnd = text.getSpanEnd(lastImageSpan);
+        int spanStart = text.getSpanStart(lastCloseImageSpan);
+        int spanEnd = text.getSpanEnd(lastCloseImageSpan);
         if (spanStart >= 0 || spanEnd >= 0) {
-            text.setSpan(lastImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(lastCloseImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -324,73 +294,59 @@ public class ImageTextEditor extends EditTextWithScrollView implements EditorIma
         return Boolean.TRUE;
     }
 
-    /**
-     * 根据图片路径获取 ImageSpan
-     */
-    private EditorImageSpan getUrlImageSpan(String imagePath) {
-        Bitmap bitmap = ImageUtils.getBitmap(imagePath);
-        bitmap = ImageUtils.zoom(bitmap, getImageTargetWidth());
-        Drawable drawable = new BitmapDrawable(bitmap);
-        drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        EditorImageSpan urlImageSpan = new EditorImageSpan(drawable, imagePath);
-        Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(closeIconRes), closeIconWidth, closeIconHeight);
-        urlImageSpan.bindCloseBitmap(closeBitmap, closeIconMarginTop, closeIconMarginRight);
-        urlImageSpan.setOnCloseImageSpanClickListener(this);
-        return urlImageSpan;
-    }
-
     /****************************************************  公开方法  **********************************************/
 
-    public void setImageTargetWidth(int imageTargetWidth) {
-        this.imageTargetWidth = imageTargetWidth;
-    }
-
-    public int getImageTargetWidth() {
-        return imageTargetWidth == 0 ? getWidth() : imageTargetWidth;
-    }
-
     /**
-     * 添加图片
-     *
-     * @param imagePath 图片路径
+     * 添加图片 ImageSpan
+     * 注意: 这里有换行操作
      */
-    public void addImage(String imagePath) {
+    public BaseCloseImageSpan addImage(BaseCloseImageSpan closeImageSpan) {
         if (!hasFocus()) {
-            return;
+            return null;
         }
-        EditorImageSpan urlImageSpan = getUrlImageSpan(imagePath);
-        SpannableStringBuilder style = getStyle();
-        boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
-        style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
-        int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
-        int end = start + urlImageSpan.getShowTextLength();
-        style.insert(start, urlImageSpan.getShowText());
-        style.setSpan(urlImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        style.insert(end, STRING_LINE_FEED);
-        setText(style);
-        setSelection(end + 1);
+        if (closeImageSpan != null) {
+            closeImageSpan.setOnCloseImageSpanClickListener(this);
+            SpannableStringBuilder style = getStyle();
+            boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
+            style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
+            int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
+            int end = start + closeImageSpan.getShowTextLength();
+            style.insert(start, closeImageSpan.getShowText());
+            style.setSpan(closeImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.insert(end, STRING_LINE_FEED);
+            setText(style);
+            setSelection(end + 1);
 
-        setMovementMethod(ClickableMovementMethod.get());
+            setMovementMethod(ClickableMovementMethod.get());
+        }
+        return closeImageSpan;
     }
 
     /**
      * 添加自定义 Span
      *
-     * @param iEditorSpan 实现了{@link IEditorSpan} 的Span
+     * @param editorSpan 实现了{@link IEditorSpan} 的Span
      */
-    public void addEditorSpan(IEditorSpan iEditorSpan) {
+    public void addEditorSpan(IEditorSpan editorSpan) {
         if (!hasFocus()) {
             return;
         }
-        int selEnd = selStart + iEditorSpan.getShowTextLength();
+        if (editorSpan instanceof BaseCloseImageSpan) {
+            addImage((BaseCloseImageSpan) editorSpan);
+            return;
+        }
+        int selEnd = selStart + editorSpan.getShowTextLength();
         SpannableStringBuilder style = getStyle();
-        String showText = iEditorSpan.getShowText();
+        String showText = editorSpan.getShowText();
         style.insert(selStart, showText);
-        style.setSpan(iEditorSpan, selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        style.setSpan(editorSpan, selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         setText(style);
         setSelection(selEnd);
     }
 
+    /**
+     * 获取最终的编辑结果
+     */
     public String getEditTexts() {
         return SpanUtils.getEditTexts(getText());
     }

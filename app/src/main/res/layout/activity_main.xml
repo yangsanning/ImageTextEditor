@@ -43,8 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start"
-                android:paddingTop="16dp"
-                app:ite_close_icon_margin_top="@dimen/eet_close_icon_margin_top" />
+                android:paddingTop="16dp"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

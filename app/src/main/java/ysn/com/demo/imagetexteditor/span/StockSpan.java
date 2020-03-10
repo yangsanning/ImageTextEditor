@@ -1,4 +1,4 @@
-package ysn.com.demo.imagetexteditor;
+package ysn.com.demo.imagetexteditor.span;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;

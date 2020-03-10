@@ -3,7 +3,7 @@ package ysn.com.editor.imagetexteditor.utils;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 
-import ysn.com.editor.imagetexteditor.span.EditorImageSpan;
+import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 
 /**
@@ -35,7 +35,7 @@ public class SpanUtils {
         return text.getSpans(start, end, IEditorSpan.class);
     }
 
-    public static EditorImageSpan[] getEditorImageSpans(Editable text, int start, int end) {
-        return text.getSpans(start, end, EditorImageSpan.class);
+    public static BaseCloseImageSpan[] getCloseImageSpans(Editable text, int start, int end) {
+        return text.getSpans(start, end, BaseCloseImageSpan.class);
     }
 }

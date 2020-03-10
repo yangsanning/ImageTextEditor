@@ -3,6 +3,9 @@ package ysn.com.demo.imagetexteditor;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -15,8 +18,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ysn.com.demo.imagetexteditor.span.EditorImageSpan;
+import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
+import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.jackphotos.JackPhotos;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -25,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL = 0x00000012;
 
     private ImageTextEditor editorEditView;
+    private View editorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         editorEditView = findViewById(R.id.main_activity_editor_edit_text);
-        View editorLayout = findViewById(R.id.main_activity_editor_layout);
-        editorEditView.setImageTargetWidth(
-                DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd()
-        );
+        editorLayout = findViewById(R.id.main_activity_editor_layout);
 
         findViewById(R.id.main_activity_preview).setOnClickListener(this);
         findViewById(R.id.main_activity_text).setOnClickListener(this);
@@ -107,7 +111,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (photoPathList == null || photoPathList.isEmpty()) {
                 return;
             }
-            editorEditView.addImage(photoPathList.get(0));
+            String imagePath = photoPathList.get(0);
+            Bitmap bitmap = ImageUtils.getBitmap(imagePath);
+            bitmap = ImageUtils.zoom(bitmap,  DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd());
+            Drawable drawable = new BitmapDrawable(bitmap);
+            drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.close), 60, 60);
+            editorEditView.addImage(new EditorImageSpan(drawable, closeBitmap, imagePath));
         }
     }
 
