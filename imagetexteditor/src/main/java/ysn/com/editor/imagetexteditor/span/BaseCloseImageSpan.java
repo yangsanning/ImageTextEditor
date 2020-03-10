@@ -85,10 +85,19 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
      */
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
-        super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+        // 图片居中显示
+        Drawable drawable = getDrawable();
+        canvas.save();
+        // 获得将要显示的文本高度 - 图片高度除2等居中位置 + top(换行情况)
+        int transY = ((bottom - top) - drawable.getBounds().bottom) / 2 + top;
+        canvas.translate(x, transY);
+        drawable.draw(canvas);
+        canvas.restore();
+
+        // 绘制关闭按钮
         Bitmap closeIconBitmap = getCloseIcon();
         if (isInit && isSelect && closeIconBitmap != null) {
-            Rect drawableRect = getDrawable().getBounds();
+            Rect drawableRect = drawable.getBounds();
             float closeBitmapLeft = x + drawableRect.right - closeIconBitmap.getWidth() - getCloseIconMarginRight();
             float closeBitmapTop = y - drawableRect.bottom + getCloseIconMarginTop();
 
