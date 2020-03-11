@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,6 +21,7 @@ import java.util.ArrayList;
 import ysn.com.demo.imagetexteditor.span.EditorImageSpan;
 import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
+import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.jackphotos.JackPhotos;
@@ -32,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PAGE_REQUEST_CODE_JACK_PHOTOS = 2020;
     private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL = 0x00000012;
 
+    private BaseCloseImageSpan.Config config;
+
+    private EditorScrollView editorScrollView;
     private ImageTextEditor editorEditView;
     private View editorLayout;
     private View anchorView;
@@ -42,14 +44,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+        editorScrollView = findViewById(R.id.main_activity_editor_scroll_view);
         editorLayout = findViewById(R.id.main_activity_editor_layout);
         editorEditView = findViewById(R.id.main_activity_editor_edit_text);
         anchorView = findViewById(R.id.main_activity_editor_anchor);
 
-        editorEditView.setOnDrawablePointListener(new ImageTextEditor.OnDrawablePointListener() {
+        editorEditView.setOnDrawablePointListener(new ImageTextEditor.OnCloseImageSpanConfigListener() {
             @Override
-            public void onDrawablePoint(Point drawablePaint) {
-                ViewUtils.setLayout(anchorView, drawablePaint.x, drawablePaint.y - ViewUtils.getHeight(anchorView));
+            public void onCloseImageSpanConfig(BaseCloseImageSpan.Config config) {
+                MainActivity.this.config = config;
+                if (config.isSelect) {
+                    int x = config.x + config.width / 2 - ViewUtils.getWidth(anchorView) / 2;
+                    int y = config.y - config.height - ViewUtils.getHeight(anchorView);
+                    ViewUtils.setLayout(anchorView, x, y);
+                    anchorView.setVisibility(View.VISIBLE);
+                } else {
+                    anchorView.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        editorScrollView.setOnScrollChangedListener(new EditorScrollView.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged(int newX, int newY, int oldX, int oldY) {
+                if (config != null && config.isSelect) {
+                    if (ViewUtils.isViewCovered(anchorView)) {
+                        int x = config.x + config.width / 2 - ViewUtils.getWidth(anchorView) / 2;
+                        int y = newY > oldY ? config.y : config.y - config.height - ViewUtils.getHeight(anchorView);
+                        ViewUtils.setLayout(anchorView, x, y);
+                    }
+                }
             }
         });
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,9 +28,9 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
     private boolean isSelect;
 
     /**
-     * 图片的左下角坐标
+     * 属性
      */
-    private Point drawablePoint = new Point();
+    private Config config = new Config();
     private OnImageSpanEventListener onImageSpanEventListener;
 
     public BaseCloseImageSpan(@NonNull Bitmap b) {
@@ -116,8 +115,16 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
             closeRect = null;
         }
 
-        drawablePoint.x = (int) x;
-        drawablePoint.y = y + space;
+        // 配置参数
+        config.x = (int) x;
+        config.y = y + space;
+        config.width = drawableRect.right;
+        config.height = drawableRect.bottom;
+        config.isSelect = isSelect;
+        if (onImageSpanEventListener != null) {
+            onImageSpanEventListener.onConfig(config);
+        }
+
         isInit = true;
     }
 
@@ -156,7 +163,6 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
             onImageSpanEventListener.onImageDown(closeImageSpan);
         } else {
             onImageSpanEventListener.onImageUp(closeImageSpan);
-            onImageSpanEventListener.onDrawablePoint(drawablePoint);
         }
     }
 
@@ -188,6 +194,37 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         /**
          * 图片的左下角坐标
          */
-        void onDrawablePoint(Point drawablePaint);
+        void onConfig(Config config);
+    }
+
+    /**
+     * 参数
+     */
+    public static class Config {
+
+        /**
+         * 图片左下角x坐标
+         */
+        public int x;
+
+        /**
+         * 图片左下角xy坐标
+         */
+        public int y;
+
+        /**
+         * 图片宽
+         */
+        public int width;
+
+        /**
+         * 图片高
+         */
+        public int height;
+
+        /**
+         * 是否选中
+         */
+        public boolean isSelect;
     }
 }

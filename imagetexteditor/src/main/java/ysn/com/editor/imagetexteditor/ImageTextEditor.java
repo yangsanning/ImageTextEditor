@@ -1,7 +1,6 @@
 package ysn.com.editor.imagetexteditor;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -37,7 +36,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
     private boolean isDelete;
     private int selStart, selEnd;
     private BaseCloseImageSpan lastCloseImageSpan;
-    private OnDrawablePointListener onDrawablePointListener;
+    private OnCloseImageSpanConfigListener onDrawablePointListener;
 
     public ImageTextEditor(Context context) {
         this(context, null);
@@ -168,11 +167,11 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
     }
 
     @Override
-    public void onDrawablePoint(Point drawablePaint) {
+    public void onConfig(BaseCloseImageSpan.Config config) {
         if (onDrawablePointListener != null) {
             ViewGroup viewGroup = (ViewGroup) getParent();
-            drawablePaint.y += getTop() - viewGroup.getPaddingTop();
-            onDrawablePointListener.onDrawablePoint(drawablePaint);
+            config.y += getTop() - viewGroup.getPaddingTop();
+            onDrawablePointListener.onCloseImageSpanConfig(config);
         }
     }
 
@@ -363,18 +362,18 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
         return SpanUtils.getEditTexts(getText());
     }
 
-    public void setOnDrawablePointListener(OnDrawablePointListener onDrawablePointListener) {
+    public void setOnDrawablePointListener(OnCloseImageSpanConfigListener onDrawablePointListener) {
         this.onDrawablePointListener = onDrawablePointListener;
     }
 
     /**
      * 返回被点击的{@link BaseCloseImageSpan}的左下角坐标
      */
-    public interface OnDrawablePointListener {
+    public interface OnCloseImageSpanConfigListener {
 
         /**
-         * {@link BaseCloseImageSpan}图片的左下角坐标
+         * {@link BaseCloseImageSpan.Config} 配置参数
          */
-        void onDrawablePoint(Point drawablePoint);
+        void onCloseImageSpanConfig(BaseCloseImageSpan.Config config);
     }
 }
