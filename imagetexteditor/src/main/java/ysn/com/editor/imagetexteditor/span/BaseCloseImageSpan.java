@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -27,7 +28,11 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
     private boolean isInit;
     private boolean isSelect;
 
-    private OnCloseImageSpanClickListener onCloseImageSpanClickListener;
+    /**
+     * 图片的左下角坐标
+     */
+    private Point drawablePoint = new Point();
+    private OnImageSpanEventListener onImageSpanEventListener;
 
     public BaseCloseImageSpan(@NonNull Bitmap b) {
         super(b);
@@ -86,10 +91,13 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
         // 图片居中显示
-        Drawable drawable = getDrawable();
         canvas.save();
-        // 获得将要显示的文本高度 - 图片高度除2等居中位置 + top(换行情况)
-        int transY = ((bottom - top) - drawable.getBounds().bottom) / 2 + top;
+        Drawable drawable = getDrawable();
+        Rect drawableRect = drawable.getBounds();
+        // 余距 = 文本高度 - 图片高度除2
+        int space = ((bottom - top) - drawableRect.bottom) / 2;
+        //  + top(换行情况)
+        int transY = space + top;
         canvas.translate(x, transY);
         drawable.draw(canvas);
         canvas.restore();
@@ -97,7 +105,6 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         // 绘制关闭按钮
         Bitmap closeIconBitmap = getCloseIcon();
         if (isInit && isSelect && closeIconBitmap != null) {
-            Rect drawableRect = drawable.getBounds();
             float closeBitmapLeft = x + drawableRect.right - closeIconBitmap.getWidth() - getCloseIconMarginRight();
             float closeBitmapTop = y - drawableRect.bottom + getCloseIconMarginTop();
 
@@ -108,6 +115,9 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         } else {
             closeRect = null;
         }
+
+        drawablePoint.x = (int) x;
+        drawablePoint.y = y - space;
         isInit = true;
     }
 
@@ -137,18 +147,16 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
      * 这里进行不同点击事件的回调处理
      */
     public void onClick(View view, int x, int y, BaseCloseImageSpan closeImageSpan, boolean isDown) {
-        if (onCloseImageSpanClickListener == null) {
+        if (onImageSpanEventListener == null) {
             return;
         }
-
         if (closeRect != null && closeRect.contains(x, y)) {
-            onCloseImageSpanClickListener.onClose(this);
+            onImageSpanEventListener.onClose(this);
+        } else if (isDown) {
+            onImageSpanEventListener.onImageDown(closeImageSpan);
         } else {
-            if (isDown) {
-                onCloseImageSpanClickListener.onImageDown(closeImageSpan);
-            } else {
-                onCloseImageSpanClickListener.onImageUp(closeImageSpan);
-            }
+            onImageSpanEventListener.onImageUp(closeImageSpan);
+            onImageSpanEventListener.onDrawablePoint(drawablePoint);
         }
     }
 
@@ -156,11 +164,11 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         isSelect = select;
     }
 
-    public void setOnCloseImageSpanClickListener(OnCloseImageSpanClickListener onCloseImageSpanClickListener) {
-        this.onCloseImageSpanClickListener = onCloseImageSpanClickListener;
+    public void setOnImageSpanEventListener(OnImageSpanEventListener onImageSpanEventListener) {
+        this.onImageSpanEventListener = onImageSpanEventListener;
     }
 
-    public interface OnCloseImageSpanClickListener {
+    public interface OnImageSpanEventListener {
 
         /**
          * 点击图片-按下
@@ -176,5 +184,10 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
          * 点击关闭按钮
          */
         void onClose(BaseCloseImageSpan closeImageSpan);
+
+        /**
+         * 图片的左下角坐标
+         */
+        void onDrawablePoint(Point drawablePaint);
     }
 }

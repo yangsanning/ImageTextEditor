@@ -1,6 +1,7 @@
 package ysn.com.editor.imagetexteditor;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -28,13 +29,14 @@ import ysn.com.editor.imagetexteditor.utils.SpanUtils;
  * @Date 2020/2/26
  * @History 2020/2/26 author: description:
  */
-public class ImageTextEditor extends EditTextWithScrollView implements BaseCloseImageSpan.OnCloseImageSpanClickListener {
+public class ImageTextEditor extends EditTextWithScrollView implements BaseCloseImageSpan.OnImageSpanEventListener {
 
     private static final String STRING_LINE_FEED = "\n";
 
     private boolean isDelete;
     private int selStart, selEnd;
     private BaseCloseImageSpan lastCloseImageSpan;
+    private OnDrawablePointListener onDrawablePointListener;
 
     public ImageTextEditor(Context context) {
         this(context, null);
@@ -162,6 +164,14 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
         text.replace(spanEnd - closeImageSpan.getShowTextLength(), spanEnd, "");
         setText(text);
         setSelection(Math.min(spanEnd, text.length()));
+    }
+
+    @Override
+    public void onDrawablePoint(Point drawablePaint) {
+        if (onDrawablePointListener != null) {
+            drawablePaint.y += getTop();
+            onDrawablePointListener.onDrawablePoint(drawablePaint);
+        }
     }
 
     /****************************************************  私有方法  **********************************************/
@@ -305,7 +315,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
             return null;
         }
         if (closeImageSpan != null) {
-            closeImageSpan.setOnCloseImageSpanClickListener(this);
+            closeImageSpan.setOnImageSpanEventListener(this);
             SpannableStringBuilder style = getStyle();
             boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
             style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
@@ -349,5 +359,20 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
      */
     public String getEditTexts() {
         return SpanUtils.getEditTexts(getText());
+    }
+
+    public void setOnDrawablePointListener(OnDrawablePointListener onDrawablePointListener) {
+        this.onDrawablePointListener = onDrawablePointListener;
+    }
+
+    /**
+     * 返回被点击的{@link BaseCloseImageSpan}的左下角坐标
+     */
+    public interface OnDrawablePointListener {
+
+        /**
+         * {@link BaseCloseImageSpan}图片的左下角坐标
+         */
+        void onDrawablePoint(Point drawablePoint);
     }
 }

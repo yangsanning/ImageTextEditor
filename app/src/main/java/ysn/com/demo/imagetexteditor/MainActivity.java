@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageTextEditor editorEditView;
     private View editorLayout;
+    private View anchorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        editorEditView = findViewById(R.id.main_activity_editor_edit_text);
         editorLayout = findViewById(R.id.main_activity_editor_layout);
+        editorEditView = findViewById(R.id.main_activity_editor_edit_text);
+        anchorView = findViewById(R.id.main_activity_editor_anchor);
+
+        editorEditView.setOnDrawablePointListener(new ImageTextEditor.OnDrawablePointListener() {
+            @Override
+            public void onDrawablePoint(Point drawablePaint) {
+                ViewUtils.setLayout(anchorView, drawablePaint.x, drawablePaint.y - ViewUtils.getHeight(anchorView));
+            }
+        });
 
         findViewById(R.id.main_activity_preview).setOnClickListener(this);
         findViewById(R.id.main_activity_text).setOnClickListener(this);
@@ -49,6 +60,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkPermission();
     }
 
+    private void showMessage(String text) {
+        Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 检查权限
+     */
     private void checkPermission() {
         int hasWriteExternalPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -64,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 预加载手机图片
      */
     private void preload() {
-        // 预加载手机图片
         JackPhotos.preload(this);
     }
 
@@ -79,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // 设置是否单选
                         .setSingle(false)
                         // 是否点击放大图片查看,，默认为true
-                        .canPreview(true)
+                        .canPreview(false)
                         // 图片的最大选择数量，小于等于0时，不限数量。
                         .setMaxSelectCount(9)
                         // 打开相册
@@ -91,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_activity_preview:
                 String data = editorEditView.getEditTexts();
                 if (TextUtils.isEmpty(data)) {
-                    Toast.makeText(this, "数据为空", Toast.LENGTH_SHORT).show();
+                    showMessage("数据为空");
                     return;
                 }
                 Intent intent = new Intent(this, PreviewActivity.class);
@@ -113,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             String imagePath = photoPathList.get(0);
             Bitmap bitmap = ImageUtils.getBitmap(imagePath);
-            bitmap = ImageUtils.zoom(bitmap,  DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd());
+            bitmap = ImageUtils.zoom(bitmap, DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd());
             Drawable drawable = new BitmapDrawable(bitmap);
             drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
             Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.close), 60, 60);
@@ -122,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 处理权限申请的回调。
+     * 处理权限申请的回调
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
