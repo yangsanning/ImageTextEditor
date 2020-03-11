@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import java.lang.reflect.Method;
@@ -169,7 +170,8 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
     @Override
     public void onDrawablePoint(Point drawablePaint) {
         if (onDrawablePointListener != null) {
-            drawablePaint.y += getTop();
+            ViewGroup viewGroup = (ViewGroup) getParent();
+            drawablePaint.y += getTop() - viewGroup.getPaddingTop();
             onDrawablePointListener.onDrawablePoint(drawablePaint);
         }
     }

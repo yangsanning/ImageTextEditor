@@ -117,7 +117,7 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         }
 
         drawablePoint.x = (int) x;
-        drawablePoint.y = y - space;
+        drawablePoint.y = y + space;
         isInit = true;
     }
 
