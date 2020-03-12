@@ -75,6 +75,16 @@
             android:text="插入文本" />
 
         <TextView
+            android:id="@+id/main_activity_jack_notes"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="插入注释" />
+
+        <TextView
             android:id="@+id/main_activity_jack_photos"
             android:layout_width="0dp"
             android:layout_height="match_parent"

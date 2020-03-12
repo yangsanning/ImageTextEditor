@@ -22,6 +22,7 @@ import ysn.com.demo.imagetexteditor.span.EditorImageSpan;
 import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
 import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
+import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.jackphotos.JackPhotos;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.main_activity_preview).setOnClickListener(this);
         findViewById(R.id.main_activity_text).setOnClickListener(this);
+        findViewById(R.id.main_activity_jack_notes).setOnClickListener(this);
         findViewById(R.id.main_activity_jack_photos).setOnClickListener(this);
 
         checkPermission();
@@ -129,6 +131,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_activity_text:
                 editorEditView.addEditorSpan(new StockSpan(("润达医疗"), ("603108")));
                 break;
+            case R.id.main_activity_jack_notes:
+                editorEditView.addEditorSpan(new NotesSpan(("玉树临风风流倜傥英俊潇洒才高八斗貌似潘安号称一朵梨花压海棠人送绰号玉面小飞龙"),
+                        getEditorWidth(), (int) editorEditView.getTextSize()));
+                break;
             case R.id.main_activity_preview:
                 String data = editorEditView.getEditTexts();
                 if (TextUtils.isEmpty(data)) {
@@ -154,12 +160,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             String imagePath = photoPathList.get(0);
             Bitmap bitmap = ImageUtils.getBitmap(imagePath);
-            bitmap = ImageUtils.zoom(bitmap, DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd());
+            bitmap = ImageUtils.zoom(bitmap, getEditorWidth());
             Drawable drawable = new BitmapDrawable(bitmap);
             drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
             Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.close), 60, 60);
             editorEditView.addImage(new EditorImageSpan(drawable, closeBitmap, imagePath));
         }
+    }
+
+    private int getEditorWidth() {
+        return DeviceUtils.getScreenWidth(this) - editorLayout.getPaddingStart() - editorLayout.getPaddingEnd();
     }
 
     /**
