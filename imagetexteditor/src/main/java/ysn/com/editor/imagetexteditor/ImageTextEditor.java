@@ -164,10 +164,10 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
     }
 
     /**
-     * 点击{@link PhotoSpan#onClick(View, int, int, IEditorSpan, boolean)}关闭按钮
+     * 点击{@link PhotoSpan#onClick(View, int, int, IEditorSpan, boolean)} 删除按钮
      */
     @Override
-    public void onClose(final PhotoSpan photoSpan) {
+    public void onClickDelete(final PhotoSpan photoSpan) {
         lastPhotoSpan = null;
         Editable text = getText();
         int spanEnd = getSpanEnd(text, photoSpan);
@@ -180,6 +180,9 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
         text.replace(spanEnd - photoSpan.getShowTextLength(), spanEnd, "");
         setText(text);
         setSelection(Math.min(spanEnd, text.length()));
+        if (onImageTextEditorEventListener != null) {
+            onImageTextEditorEventListener.onPhotoDelete();
+        }
     }
 
     @Override
@@ -425,5 +428,10 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
          * {@link NotesSpan#onClick(View, int, int, IEditorSpan, boolean)}
          */
         void onNotesSpanClick(View view, IEditorSpan iEditorSpan);
+
+        /**
+         * 图片删除的回调
+         */
+        void onPhotoDelete();
     }
 }

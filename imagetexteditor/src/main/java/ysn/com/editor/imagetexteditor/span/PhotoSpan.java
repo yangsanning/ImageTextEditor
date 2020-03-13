@@ -24,9 +24,9 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
      * closeIconMarginRight: 关闭按钮右边距
      * imagePath: 图片路径
      */
-    private final Bitmap closeIconBitmap;
-    private int closeIconMarginTop;
-    private int closeIconMarginRight;
+    private final Bitmap deleteIconBitmap;
+    private int deleteIconMarginTop;
+    private int deleteIconMarginRight;
     private String imagePath;
     private String showText = "[图片]";
 
@@ -45,26 +45,26 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
 
     /**
      * @param drawable
-     * @param closeIconBitmap 关闭按钮 Bitmap
+     * @param deleteIconBitmap 删除按钮 Bitmap
      * @param imagePath       图片路径
      */
-    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap closeIconBitmap) {
-        this(drawable, imagePath, closeIconBitmap, 40, 40);
+    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap deleteIconBitmap) {
+        this(drawable, imagePath, deleteIconBitmap, 40, 40);
     }
 
     /**
      * @param drawable
      * @param imagePath            图片路径
-     * @param closeIconBitmap      关闭按钮 Bitmap
-     * @param closeIconMarginTop   关闭按钮上边距
-     * @param closeIconMarginRight 关闭按钮右边距
+     * @param deleteIconBitmap      删除按钮 Bitmap
+     * @param deleteIconMarginTop   删除按钮上边距
+     * @param deleteIconMarginRight 删除按钮右边距
      */
-    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap closeIconBitmap, int closeIconMarginTop, int closeIconMarginRight) {
+    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap deleteIconBitmap, int deleteIconMarginTop, int deleteIconMarginRight) {
         super(drawable);
-        this.closeIconBitmap = closeIconBitmap;
+        this.deleteIconBitmap = deleteIconBitmap;
         this.imagePath = imagePath;
-        this.closeIconMarginTop = closeIconMarginTop;
-        this.closeIconMarginRight = closeIconMarginRight;
+        this.deleteIconMarginTop = deleteIconMarginTop;
+        this.deleteIconMarginRight = deleteIconMarginRight;
     }
 
     /**
@@ -88,14 +88,14 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
         canvas.restore();
 
         // 绘制关闭按钮
-        if (isInit && isSelect && closeIconBitmap != null) {
-            float closeBitmapLeft = x + drawableRect.right - closeIconBitmap.getWidth() - closeIconMarginRight;
-            float closeBitmapTop = y - drawableRect.bottom + closeIconMarginTop;
+        if (isInit && isSelect && deleteIconBitmap != null) {
+            float closeBitmapLeft = x + drawableRect.right - deleteIconBitmap.getWidth() - deleteIconMarginRight;
+            float closeBitmapTop = y - drawableRect.bottom + deleteIconMarginTop;
 
             closeRect = new Rect((int) closeBitmapLeft, (int) closeBitmapTop,
-                    ((int) closeBitmapLeft + closeIconBitmap.getWidth()), ((int) closeBitmapTop + closeIconBitmap.getHeight()));
+                    ((int) closeBitmapLeft + deleteIconBitmap.getWidth()), ((int) closeBitmapTop + deleteIconBitmap.getHeight()));
 
-            canvas.drawBitmap(closeIconBitmap, closeBitmapLeft, closeBitmapTop, paint);
+            canvas.drawBitmap(deleteIconBitmap, closeBitmapLeft, closeBitmapTop, paint);
         } else {
             closeRect = null;
         }
@@ -148,7 +148,7 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
             return;
         }
         if (closeRect != null && closeRect.contains(x, y)) {
-            onPhotoSpanEventListener.onClose(this);
+            onPhotoSpanEventListener.onClickDelete(this);
         } else if (isDown) {
             onPhotoSpanEventListener.onImageDown((PhotoSpan) photoSpan);
         } else {
@@ -179,7 +179,7 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
         /**
          * 点击关闭按钮
          */
-        void onClose(PhotoSpan photoSpan);
+        void onClickDelete(PhotoSpan photoSpan);
 
         /**
          * 图片的左下角坐标

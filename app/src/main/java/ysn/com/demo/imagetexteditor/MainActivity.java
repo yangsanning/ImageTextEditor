@@ -68,6 +68,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onNotesSpanClick(View view, IEditorSpan iEditorSpan) {
                 showMessage("点击了注释");
             }
+
+            @Override
+            public void onPhotoDelete() {
+                MainActivity.this.config = null;
+                notesView.setVisibility(View.GONE);
+            }
         });
 
         editorScrollView.setOnScrollChangedListener(new EditorScrollView.OnScrollChangedListener() {
@@ -168,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bitmap = ImageUtils.zoom(bitmap, getEditorWidth());
             Drawable drawable = new BitmapDrawable(bitmap);
             drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
-            Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.close), 60, 60);
-            editorEditView.addImage(new PhotoSpan(drawable, imagePath, closeBitmap));
+            Bitmap deleteIconBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.ic_delete), 60, 60);
+            editorEditView.addImage(new PhotoSpan(drawable, imagePath, deleteIconBitmap));
         }
     }
 
