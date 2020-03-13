@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
-import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
+import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
@@ -30,14 +30,14 @@ import ysn.com.editor.imagetexteditor.utils.SpanUtils;
  * @Date 2020/2/26
  * @History 2020/2/26 author: description:
  */
-public class ImageTextEditor extends EditTextWithScrollView implements BaseCloseImageSpan.OnImageSpanEventListener {
+public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan.OnPhotoSpanEventListener {
 
     private static final String STRING_LINE_FEED = "\n";
 
     private boolean isDelete;
     private int selStart, selEnd;
-    private BaseCloseImageSpan lastCloseImageSpan;
-    private OnCloseImageSpanConfigListener onDrawablePointListener;
+    private PhotoSpan lastPhotoSpan;
+    private OnPhotoSpanConfigListener onPhotoSpanConfigListener;
 
     public ImageTextEditor(Context context) {
         this(context, null);
@@ -81,7 +81,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
         }
 
         // 处理 EditorImageSpan 选中与非选中状态
-        dealCloseImageSpanSelection(text);
+        dealPhotoSpanSelection(text);
 
         super.onSelectionChanged(selStart, selEnd);
     }
@@ -97,17 +97,17 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
             if (!TextUtils.isEmpty(text)) {
                 if (selStart == selEnd) {
                     // 如果是图片, 则进行选中
-                    BaseCloseImageSpan[] closeImageSpans;
+                    PhotoSpan[] photoSpans;
                     NotesSpan[] notesSpans = SpanUtils.getNotesSpans(text, (selStart - 2), selStart);
                     if (notesSpans.length > 0) {
                         // 如果是注解, 则往回移动
                         int spanStart = getSpanStart(text, notesSpans[0]);
-                        closeImageSpans = SpanUtils.getCloseImageSpans(text, spanStart - 2, spanStart);
+                        photoSpans = SpanUtils.getCloseImageSpans(text, spanStart - 2, spanStart);
                     } else {
-                        closeImageSpans = SpanUtils.getCloseImageSpans(text, (selStart - 2), selStart);
+                        photoSpans = SpanUtils.getCloseImageSpans(text, (selStart - 2), selStart);
                     }
-                    if (closeImageSpans.length > 0) {
-                        selectImageSpan(text, closeImageSpans[0]);
+                    if (photoSpans.length > 0) {
+                        selectPhotoSpan(text, photoSpans[0]);
                         hideSoftInput();
                         return true;
                     }
@@ -145,43 +145,43 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
     }
 
     /**
-     * 点击{@link BaseCloseImageSpan#onClick(View, int, int, BaseCloseImageSpan, boolean)}图片-按下
+     * 点击{@link PhotoSpan#onClick(View, int, int, PhotoSpan, boolean)}图片-按下
      */
     @Override
-    public void onImageDown(BaseCloseImageSpan closeImageSpan) {
+    public void onImageDown(PhotoSpan closeImageSpan) {
         setInputVisible(bFalse());
     }
 
     /**
-     * 点击{@link BaseCloseImageSpan#onClick(View, int, int, BaseCloseImageSpan, boolean)}图片-抬起
+     * 点击{@link PhotoSpan#onClick(View, int, int, PhotoSpan, boolean)}图片-抬起
      */
     @Override
-    public void onImageUp(BaseCloseImageSpan closeImageSpan) {
-        unSelectImageSpan(getText());
-        selectImageSpan(getText(), closeImageSpan);
+    public void onImageUp(PhotoSpan photoSpan) {
+        unSelectPhotoSpan(getText());
+        selectPhotoSpan(getText(), photoSpan);
         hideSoftInput();
     }
 
     /**
-     * 点击{@link BaseCloseImageSpan#onClick(View, int, int, BaseCloseImageSpan, boolean)}关闭按钮
+     * 点击{@link PhotoSpan#onClick(View, int, int, PhotoSpan, boolean)}关闭按钮
      */
     @Override
-    public void onClose(final BaseCloseImageSpan closeImageSpan) {
-        lastCloseImageSpan = null;
+    public void onClose(final PhotoSpan photoSpan) {
+        lastPhotoSpan = null;
         Editable text = getText();
-        int spanEnd = getSpanEnd(text, closeImageSpan);
-        text.removeSpan(closeImageSpan);
-        text.replace(spanEnd - closeImageSpan.getShowTextLength(), spanEnd, "");
+        int spanEnd = getSpanEnd(text, photoSpan);
+        text.removeSpan(photoSpan);
+        text.replace(spanEnd - photoSpan.getShowTextLength(), spanEnd, "");
         setText(text);
         setSelection(Math.min(spanEnd, text.length()));
     }
 
     @Override
-    public void onConfig(BaseCloseImageSpan.Config config) {
-        if (onDrawablePointListener != null) {
+    public void onConfig(PhotoSpan.Config config) {
+        if (onPhotoSpanConfigListener != null) {
             ViewGroup viewGroup = (ViewGroup) getParent();
             config.y += getTop() - viewGroup.getPaddingTop();
-            onDrawablePointListener.onCloseImageSpanConfig(config);
+            onPhotoSpanConfigListener.onPhotoSpanConfig(config);
         }
     }
 
@@ -220,43 +220,43 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
     }
 
     /**
-     * 处理{@link BaseCloseImageSpan} 选中与非选中状态
+     * 处理{@link PhotoSpan} 选中与非选中状态
      */
-    private void dealCloseImageSpanSelection(Editable text) {
+    private void dealPhotoSpanSelection(Editable text) {
         if (TextUtils.isEmpty(text)) {
             return;
         }
-        BaseCloseImageSpan[] closeImageSpans = SpanUtils.getCloseImageSpans(text, (selStart - 1), selStart);
-        if (closeImageSpans.length > 0) {
-            selectImageSpan(text, closeImageSpans[0]);
+        PhotoSpan[] photoSpans = SpanUtils.getCloseImageSpans(text, (selStart - 1), selStart);
+        if (photoSpans.length > 0) {
+            selectPhotoSpan(text, photoSpans[0]);
         } else {
-            unSelectImageSpan(text);
+            unSelectPhotoSpan(text);
         }
     }
 
-    private void selectImageSpan(Editable text, BaseCloseImageSpan closeImageSpan) {
-        lastCloseImageSpan = closeImageSpan;
-        lastCloseImageSpan.setSelect(bTrue());
-        updateLastImageSpan(text);
+    private void selectPhotoSpan(Editable text, PhotoSpan photoSpan) {
+        lastPhotoSpan = photoSpan;
+        lastPhotoSpan.setSelect(bTrue());
+        updateLastPhotoSpan(text);
     }
 
-    private void unSelectImageSpan(Editable text) {
-        if (lastCloseImageSpan == null) {
+    private void unSelectPhotoSpan(Editable text) {
+        if (lastPhotoSpan == null) {
             return;
         }
-        lastCloseImageSpan.setSelect(bFalse());
-        updateLastImageSpan(text);
-        lastCloseImageSpan = null;
+        lastPhotoSpan.setSelect(bFalse());
+        updateLastPhotoSpan(text);
+        lastPhotoSpan = null;
     }
 
     /**
      * 切换imageSpan
      */
-    private void updateLastImageSpan(Editable text) {
-        int spanStart = text.getSpanStart(lastCloseImageSpan);
-        int spanEnd = text.getSpanEnd(lastCloseImageSpan);
+    private void updateLastPhotoSpan(Editable text) {
+        int spanStart = text.getSpanStart(lastPhotoSpan);
+        int spanEnd = text.getSpanEnd(lastPhotoSpan);
         if (spanStart >= 0 || spanEnd >= 0) {
-            text.setSpan(lastCloseImageSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(lastPhotoSpan, spanStart, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -326,8 +326,8 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
         if (!hasFocus()) {
             return;
         }
-        if (editorSpan instanceof BaseCloseImageSpan) {
-            addImage((BaseCloseImageSpan) editorSpan);
+        if (editorSpan instanceof PhotoSpan) {
+            addImage((PhotoSpan) editorSpan);
             return;
         }
         int selEnd = selStart + editorSpan.getShowTextLength();
@@ -343,32 +343,32 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
      * 添加图片 ImageSpan
      * 注意: 这里可能有换行操作
      */
-    public BaseCloseImageSpan addImage(BaseCloseImageSpan closeImageSpan) {
+    public PhotoSpan addImage(PhotoSpan photoSpan) {
         if (!hasFocus()) {
             return null;
         }
-        if (closeImageSpan != null) {
-            closeImageSpan.setOnImageSpanEventListener(this);
+        if (photoSpan != null) {
+            photoSpan.setOnPhotoSpanEventListener(this);
             SpannableStringBuilder style = getStyle();
             // 判断是否需要换行, 若已有行则不换
             boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
             style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
             int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
-            int end = start + closeImageSpan.getShowTextLength();
-            style.insert(start, closeImageSpan.getShowText());
-            style.setSpan(closeImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            int end = start + photoSpan.getShowTextLength();
+            style.insert(start, photoSpan.getShowText());
+            style.setSpan(photoSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             style.insert(end, STRING_LINE_FEED);
             setText(style);
             setSelection(end + 1);
 
             setMovementMethod(ClickableMovementMethod.get());
         }
-        return closeImageSpan;
+        return photoSpan;
     }
 
     /**
      * 添加注释 {@link NotesSpan}
-     * 注意: 需要结合{@link BaseCloseImageSpan} 使用, 如需单独使用请参考并自定义
+     * 注意: 需要结合{@link PhotoSpan} 使用, 如需单独使用请参考并自定义
      */
     public NotesSpan addNotes(NotesSpan notesSpan) {
         if (notesSpan != null) {
@@ -393,18 +393,18 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
         return SpanUtils.getEditTexts(getText());
     }
 
-    public void setOnDrawablePointListener(OnCloseImageSpanConfigListener onDrawablePointListener) {
-        this.onDrawablePointListener = onDrawablePointListener;
+    public void setOnPhotoSpanConfigListener(OnPhotoSpanConfigListener onPhotoSpanConfigListener) {
+        this.onPhotoSpanConfigListener = onPhotoSpanConfigListener;
     }
 
     /**
-     * 返回被点击的{@link BaseCloseImageSpan}的左下角坐标
+     * 返回被点击的{@link PhotoSpan}的左下角坐标
      */
-    public interface OnCloseImageSpanConfigListener {
+    public interface OnPhotoSpanConfigListener {
 
         /**
-         * {@link BaseCloseImageSpan.Config} 配置参数
+         * {@link PhotoSpan.Config} 配置参数
          */
-        void onCloseImageSpanConfig(BaseCloseImageSpan.Config config);
+        void onPhotoSpanConfig(PhotoSpan.Config config);
     }
 }

@@ -8,7 +8,7 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
+import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 
 /**
  * @Author yangsanning
@@ -51,7 +51,7 @@ public class ClickableMovementMethod extends LinkMovementMethod {
             int off = layout.getOffsetForHorizontal(line, x);
 
             ClickableSpan[] clickableSpans = buffer.getSpans(off, off, ClickableSpan.class);
-            BaseCloseImageSpan[] closeImageSpans = buffer.getSpans(off, off, BaseCloseImageSpan.class);
+            PhotoSpan[] photoSpans = buffer.getSpans(off, off, PhotoSpan.class);
 
             if (clickableSpans.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
@@ -60,8 +60,8 @@ public class ClickableMovementMethod extends LinkMovementMethod {
                     Selection.setSelection(buffer, buffer.getSpanStart(clickableSpans[0]), buffer.getSpanEnd(clickableSpans[0]));
                 }
                 return true;
-            } else if (closeImageSpans.length != 0) {
-                closeImageSpans[0].onClick(textView, x, y, closeImageSpans[0], action == MotionEvent.ACTION_DOWN);
+            } else if (photoSpans.length != 0) {
+                photoSpans[0].onClick(textView, x, y, photoSpans[0], action == MotionEvent.ACTION_DOWN);
                 return true;
             } else {
                 Selection.removeSelection(buffer);

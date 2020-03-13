@@ -18,11 +18,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ysn.com.demo.imagetexteditor.span.EditorImageSpan;
 import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
-import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
+import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.jackphotos.JackPhotos;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PAGE_REQUEST_CODE_JACK_PHOTOS = 2020;
     private static final int PERMISSION_REQUEST_CODE_WRITE_EXTERNAL = 0x00000012;
 
-    private BaseCloseImageSpan.Config config;
+    private PhotoSpan.Config config;
 
     private EditorScrollView editorScrollView;
     private ImageTextEditor editorEditView;
@@ -50,9 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editorEditView = findViewById(R.id.main_activity_editor_edit_text);
         notesView = findViewById(R.id.main_activity_editor_notes);
 
-        editorEditView.setOnDrawablePointListener(new ImageTextEditor.OnCloseImageSpanConfigListener() {
+        editorEditView.setOnPhotoSpanConfigListener(new ImageTextEditor.OnPhotoSpanConfigListener() {
             @Override
-            public void onCloseImageSpanConfig(BaseCloseImageSpan.Config config) {
+            public void onPhotoSpanConfig(PhotoSpan.Config config) {
                 MainActivity.this.config = config;
                 if (config.isSelect) {
                     int x = config.x + config.width / 2 - ViewUtils.getWidth(notesView) / 2;
@@ -164,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Drawable drawable = new BitmapDrawable(bitmap);
             drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
             Bitmap closeBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.close), 60, 60);
-            editorEditView.addImage(new EditorImageSpan(drawable, closeBitmap, imagePath));
+            editorEditView.addImage(new PhotoSpan(drawable, imagePath, closeBitmap));
         }
     }
 

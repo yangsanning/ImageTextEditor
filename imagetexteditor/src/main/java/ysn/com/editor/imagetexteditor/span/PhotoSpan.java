@@ -1,24 +1,34 @@
 package ysn.com.editor.imagetexteditor.span;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.style.ImageSpan;
 import android.view.View;
 
 /**
  * @Author yangsanning
- * @ClassName BaseCloseImageSpan
- * @Description 带有关闭按钮的 ImageSpan, 请继承使用
+ * @ClassName PhotoSpan
+ * @Description 图片Span, 带有关闭按钮的 ImageSpan
  * @Date 2020/3/9
  * @History 2020/3/9 author: description:
  */
-public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpan {
+public class PhotoSpan extends ImageSpan implements IEditorSpan {
+
+    /**
+     * closeIconBitmap: 关闭按钮 Bitmap
+     * closeIconMarginTop: 关闭按钮上边距
+     * closeIconMarginRight: 关闭按钮右边距
+     * imagePath: 图片路径
+     */
+    private final Bitmap closeIconBitmap;
+    private int closeIconMarginTop;
+    private int closeIconMarginRight;
+    private String imagePath;
+    private String showText = "[图片]";
 
     /**
      * 点击按钮的有效范围
@@ -31,54 +41,55 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
      * 属性
      */
     private Config config = new Config();
-    private OnImageSpanEventListener onImageSpanEventListener;
+    private OnPhotoSpanEventListener onPhotoSpanEventListener;
 
-    public BaseCloseImageSpan(@NonNull Bitmap b) {
-        super(b);
+    /**
+     * @param drawable
+     * @param closeIconBitmap 关闭按钮 Bitmap
+     * @param imagePath       图片路径
+     */
+    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap closeIconBitmap) {
+        this(drawable, imagePath, closeIconBitmap, 40, 40);
     }
 
-    public BaseCloseImageSpan(@NonNull Bitmap b, int verticalAlignment) {
-        super(b, verticalAlignment);
-    }
-
-    public BaseCloseImageSpan(@NonNull Context context, @NonNull Bitmap bitmap) {
-        super(context, bitmap);
-    }
-
-    public BaseCloseImageSpan(@NonNull Context context, @NonNull Bitmap bitmap, int verticalAlignment) {
-        super(context, bitmap, verticalAlignment);
-    }
-
-    public BaseCloseImageSpan(@NonNull Drawable drawable) {
+    /**
+     * @param drawable
+     * @param imagePath            图片路径
+     * @param closeIconBitmap      关闭按钮 Bitmap
+     * @param closeIconMarginTop   关闭按钮上边距
+     * @param closeIconMarginRight 关闭按钮右边距
+     */
+    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap closeIconBitmap, int closeIconMarginTop, int closeIconMarginRight) {
         super(drawable);
+        this.closeIconBitmap = closeIconBitmap;
+        this.imagePath = imagePath;
+        this.closeIconMarginTop = closeIconMarginTop;
+        this.closeIconMarginRight = closeIconMarginRight;
     }
 
-    public BaseCloseImageSpan(@NonNull Drawable drawable, int verticalAlignment) {
-        super(drawable, verticalAlignment);
+    @Override
+    public String getStartTag() {
+        return "<image>";
     }
 
-    public BaseCloseImageSpan(@NonNull Drawable drawable, @NonNull String source) {
-        super(drawable, source);
+    @Override
+    public String getEndTag() {
+        return "</image>";
     }
 
-    public BaseCloseImageSpan(@NonNull Drawable drawable, @NonNull String source, int verticalAlignment) {
-        super(drawable, source, verticalAlignment);
+    @Override
+    public String getShowText() {
+        return showText;
     }
 
-    public BaseCloseImageSpan(@NonNull Context context, @NonNull Uri uri) {
-        super(context, uri);
+    @Override
+    public int getShowTextLength() {
+        return showText.length();
     }
 
-    public BaseCloseImageSpan(@NonNull Context context, @NonNull Uri uri, int verticalAlignment) {
-        super(context, uri, verticalAlignment);
-    }
-
-    public BaseCloseImageSpan(@NonNull Context context, int resourceId) {
-        super(context, resourceId);
-    }
-
-    public BaseCloseImageSpan(@NonNull Context context, int resourceId, int verticalAlignment) {
-        super(context, resourceId, verticalAlignment);
+    @Override
+    public String getResult() {
+        return getStartTag() + imagePath + getEndTag();
     }
 
     /**
@@ -102,10 +113,9 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         canvas.restore();
 
         // 绘制关闭按钮
-        Bitmap closeIconBitmap = getCloseIcon();
         if (isInit && isSelect && closeIconBitmap != null) {
-            float closeBitmapLeft = x + drawableRect.right - closeIconBitmap.getWidth() - getCloseIconMarginRight();
-            float closeBitmapTop = y - drawableRect.bottom + getCloseIconMarginTop();
+            float closeBitmapLeft = x + drawableRect.right - closeIconBitmap.getWidth() - closeIconMarginRight;
+            float closeBitmapTop = y - drawableRect.bottom + closeIconMarginTop;
 
             closeRect = new Rect((int) closeBitmapLeft, (int) closeBitmapTop,
                     ((int) closeBitmapLeft + closeIconBitmap.getWidth()), ((int) closeBitmapTop + closeIconBitmap.getHeight()));
@@ -121,48 +131,27 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         config.width = drawableRect.right;
         config.height = drawableRect.bottom;
         config.isSelect = isSelect;
-        if (onImageSpanEventListener != null) {
-            onImageSpanEventListener.onConfig(config);
+        if (onPhotoSpanEventListener != null) {
+            onPhotoSpanEventListener.onConfig(config);
         }
 
         isInit = true;
     }
 
     /**
-     * 获取关闭按钮图标
-     *
-     * @return 关闭按钮图标 Bitmap
-     */
-    protected abstract Bitmap getCloseIcon();
-
-    /**
-     * 获取关闭图标的上边距
-     *
-     * @return 关闭图标的上边距
-     */
-    protected abstract float getCloseIconMarginTop();
-
-    /**
-     * 获取关闭图标的右边距
-     *
-     * @return 关闭图标的右边距
-     */
-    protected abstract float getCloseIconMarginRight();
-
-    /**
      * 提供给{@link ysn.com.editor.imagetexteditor.component.ClickableMovementMethod}使用的点击事件
      * 这里进行不同点击事件的回调处理
      */
-    public void onClick(View view, int x, int y, BaseCloseImageSpan closeImageSpan, boolean isDown) {
-        if (onImageSpanEventListener == null) {
+    public void onClick(View view, int x, int y, PhotoSpan photoSpan, boolean isDown) {
+        if (onPhotoSpanEventListener == null) {
             return;
         }
         if (closeRect != null && closeRect.contains(x, y)) {
-            onImageSpanEventListener.onClose(this);
+            onPhotoSpanEventListener.onClose(this);
         } else if (isDown) {
-            onImageSpanEventListener.onImageDown(closeImageSpan);
+            onPhotoSpanEventListener.onImageDown(photoSpan);
         } else {
-            onImageSpanEventListener.onImageUp(closeImageSpan);
+            onPhotoSpanEventListener.onImageUp(photoSpan);
         }
     }
 
@@ -170,26 +159,26 @@ public abstract class BaseCloseImageSpan extends ImageSpan implements IEditorSpa
         isSelect = select;
     }
 
-    public void setOnImageSpanEventListener(OnImageSpanEventListener onImageSpanEventListener) {
-        this.onImageSpanEventListener = onImageSpanEventListener;
+    public void setOnPhotoSpanEventListener(OnPhotoSpanEventListener onPhotoSpanEventListener) {
+        this.onPhotoSpanEventListener = onPhotoSpanEventListener;
     }
 
-    public interface OnImageSpanEventListener {
+    public interface OnPhotoSpanEventListener {
 
         /**
          * 点击图片-按下
          */
-        void onImageDown(BaseCloseImageSpan closeImageSpan);
+        void onImageDown(PhotoSpan photoSpan);
 
         /**
          * 点击图片-抬起
          */
-        void onImageUp(BaseCloseImageSpan closeImageSpan);
+        void onImageUp(PhotoSpan photoSpan);
 
         /**
          * 点击关闭按钮
          */
-        void onClose(BaseCloseImageSpan closeImageSpan);
+        void onClose(PhotoSpan photoSpan);
 
         /**
          * 图片的左下角坐标
