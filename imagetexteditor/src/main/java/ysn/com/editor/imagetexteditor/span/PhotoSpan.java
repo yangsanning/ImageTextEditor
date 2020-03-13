@@ -67,31 +67,6 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
         this.closeIconMarginRight = closeIconMarginRight;
     }
 
-    @Override
-    public String getStartTag() {
-        return "<image>";
-    }
-
-    @Override
-    public String getEndTag() {
-        return "</image>";
-    }
-
-    @Override
-    public String getShowText() {
-        return showText;
-    }
-
-    @Override
-    public int getShowTextLength() {
-        return showText.length();
-    }
-
-    @Override
-    public String getResult() {
-        return getStartTag() + imagePath + getEndTag();
-    }
-
     /**
      * 绘制关闭按钮
      *
@@ -138,20 +113,46 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
         isInit = true;
     }
 
+    @Override
+    public String getStartTag() {
+        return "<image>";
+    }
+
+    @Override
+    public String getEndTag() {
+        return "</image>";
+    }
+
+    @Override
+    public String getShowText() {
+        return showText;
+    }
+
+    @Override
+    public int getShowTextLength() {
+        return showText.length();
+    }
+
+    @Override
+    public String getResult() {
+        return getStartTag() + imagePath + getEndTag();
+    }
+
     /**
      * 提供给{@link ysn.com.editor.imagetexteditor.component.ClickableMovementMethod}使用的点击事件
      * 这里进行不同点击事件的回调处理
      */
-    public void onClick(View view, int x, int y, PhotoSpan photoSpan, boolean isDown) {
+    @Override
+    public void onClick(View view, int x, int y, IEditorSpan photoSpan, boolean isDown) {
         if (onPhotoSpanEventListener == null) {
             return;
         }
         if (closeRect != null && closeRect.contains(x, y)) {
             onPhotoSpanEventListener.onClose(this);
         } else if (isDown) {
-            onPhotoSpanEventListener.onImageDown(photoSpan);
+            onPhotoSpanEventListener.onImageDown((PhotoSpan) photoSpan);
         } else {
-            onPhotoSpanEventListener.onImageUp(photoSpan);
+            onPhotoSpanEventListener.onImageUp((PhotoSpan) photoSpan);
         }
     }
 

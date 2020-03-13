@@ -1,5 +1,7 @@
 package ysn.com.editor.imagetexteditor.span;
 
+import android.view.View;
+
 /**
  * @Author yangsanning
  * @ClassName IEditSpan
@@ -43,4 +45,15 @@ public interface IEditorSpan {
      * @return 带有标签的文本（即编辑后的结果）
      */
     String getResult();
+
+    /**
+     * span 的点击事件统一走自定义
+     *
+     * @param view        控件
+     * @param x           x坐标
+     * @param y           y坐标
+     * @param iEditorSpan 编辑器Span需要继承的接口
+     * @param isDown      是否是down事件( {@link ysn.com.editor.imagetexteditor.component.ClickableMovementMethod} 仅回调down up 事件)
+     */
+    void onClick(View view, int x, int y, IEditorSpan iEditorSpan, boolean isDown);
 }

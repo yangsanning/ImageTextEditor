@@ -8,7 +8,7 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
+import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 
 /**
  * @Author yangsanning
@@ -50,9 +50,14 @@ public class ClickableMovementMethod extends LinkMovementMethod {
             int line = layout.getLineForVertical(y);
             int off = layout.getOffsetForHorizontal(line, x);
 
-            ClickableSpan[] clickableSpans = buffer.getSpans(off, off, ClickableSpan.class);
-            PhotoSpan[] photoSpans = buffer.getSpans(off, off, PhotoSpan.class);
+            // 优先走自定义 Span 的点击事件
+            IEditorSpan[] iEditorSpans = buffer.getSpans(off, off, IEditorSpan.class);
+            if (iEditorSpans.length != 0) {
+                iEditorSpans[0].onClick(textView, x, y, iEditorSpans[0], action == MotionEvent.ACTION_DOWN);
+                return true;
+            }
 
+            ClickableSpan[] clickableSpans = buffer.getSpans(off, off, ClickableSpan.class);
             if (clickableSpans.length != 0) {
                 if (action == MotionEvent.ACTION_UP) {
                     clickableSpans[0].onClick(textView);
@@ -60,12 +65,8 @@ public class ClickableMovementMethod extends LinkMovementMethod {
                     Selection.setSelection(buffer, buffer.getSpanStart(clickableSpans[0]), buffer.getSpanEnd(clickableSpans[0]));
                 }
                 return true;
-            } else if (photoSpans.length != 0) {
-                photoSpans[0].onClick(textView, x, y, photoSpans[0], action == MotionEvent.ACTION_DOWN);
-                return true;
-            } else {
-                Selection.removeSelection(buffer);
             }
+            Selection.removeSelection(buffer);
         }
         return false;
     }

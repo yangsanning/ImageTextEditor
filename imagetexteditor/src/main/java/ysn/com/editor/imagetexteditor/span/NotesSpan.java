@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.text.style.ImageSpan;
+import android.view.View;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
     private List<String> lineTextList;
 
     private String showText = "[注释]";
+
+    private OnNotesSpanClickListener onNotesSpanClickListener;
 
     public NotesSpan(String notes, int width, int textSize) {
         this(notes, width, Color.parseColor("#999999"), textSize);
@@ -134,5 +137,21 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
     @Override
     public String getResult() {
         return null;
+    }
+
+    @Override
+    public void onClick(View view, int x, int y, IEditorSpan iEditorSpan, boolean isDown) {
+        if (onNotesSpanClickListener != null) {
+            onNotesSpanClickListener.onNoteSpanClick(view, iEditorSpan);
+        }
+    }
+
+    public void setOnNotesSpanClickListener(OnNotesSpanClickListener onNotesSpanClickListener) {
+        this.onNotesSpanClickListener = onNotesSpanClickListener;
+    }
+
+    public interface OnNotesSpanClickListener {
+
+        void onNoteSpanClick(View view, IEditorSpan iEditorSpan);
     }
 }

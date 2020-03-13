@@ -16,9 +16,9 @@ import java.lang.reflect.Method;
 
 import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
+import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
 import ysn.com.editor.imagetexteditor.utils.SpanUtils;
@@ -30,14 +30,15 @@ import ysn.com.editor.imagetexteditor.utils.SpanUtils;
  * @Date 2020/2/26
  * @History 2020/2/26 author: description:
  */
-public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan.OnPhotoSpanEventListener {
+public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan.OnPhotoSpanEventListener,
+        NotesSpan.OnNotesSpanClickListener {
 
     private static final String STRING_LINE_FEED = "\n";
 
     private boolean isDelete;
     private int selStart, selEnd;
     private PhotoSpan lastPhotoSpan;
-    private OnPhotoSpanConfigListener onPhotoSpanConfigListener;
+    private OnImageTextEditorEventListener onImageTextEditorEventListener;
 
     public ImageTextEditor(Context context) {
         this(context, null);
@@ -145,15 +146,15 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
     }
 
     /**
-     * 点击{@link PhotoSpan#onClick(View, int, int, PhotoSpan, boolean)}图片-按下
+     * 点击{@link PhotoSpan#onClick(View, int, int, IEditorSpan, boolean)}}图片-按下
      */
     @Override
-    public void onImageDown(PhotoSpan closeImageSpan) {
+    public void onImageDown(PhotoSpan photoSpan) {
         setInputVisible(bFalse());
     }
 
     /**
-     * 点击{@link PhotoSpan#onClick(View, int, int, PhotoSpan, boolean)}图片-抬起
+     * 点击{@link PhotoSpan#onClick(View, int, int, IEditorSpan, boolean)}图片-抬起
      */
     @Override
     public void onImageUp(PhotoSpan photoSpan) {
@@ -163,7 +164,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
     }
 
     /**
-     * 点击{@link PhotoSpan#onClick(View, int, int, PhotoSpan, boolean)}关闭按钮
+     * 点击{@link PhotoSpan#onClick(View, int, int, IEditorSpan, boolean)}关闭按钮
      */
     @Override
     public void onClose(final PhotoSpan photoSpan) {
@@ -178,10 +179,19 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
 
     @Override
     public void onConfig(PhotoSpan.Config config) {
-        if (onPhotoSpanConfigListener != null) {
+        if (onImageTextEditorEventListener != null) {
             ViewGroup viewGroup = (ViewGroup) getParent();
             config.y += getTop() - viewGroup.getPaddingTop();
-            onPhotoSpanConfigListener.onPhotoSpanConfig(config);
+            onImageTextEditorEventListener.onPhotoSpanConfig(config);
+        }
+    }
+
+    @Override
+    public void onNoteSpanClick(View view, IEditorSpan iEditorSpan) {
+        unSelectPhotoSpan(getText());
+        hideSoftInput();
+        if (onImageTextEditorEventListener != null) {
+            onImageTextEditorEventListener.onNotesSpanClick(view, iEditorSpan);
         }
     }
 
@@ -372,6 +382,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
      */
     public NotesSpan addNotes(NotesSpan notesSpan) {
         if (notesSpan != null) {
+            notesSpan.setOnNotesSpanClickListener(this);
             SpannableStringBuilder style = getStyle();
             int start = selStart + STRING_LINE_FEED.length();
             int end = start + notesSpan.getShowTextLength();
@@ -393,18 +404,23 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
         return SpanUtils.getEditTexts(getText());
     }
 
-    public void setOnPhotoSpanConfigListener(OnPhotoSpanConfigListener onPhotoSpanConfigListener) {
-        this.onPhotoSpanConfigListener = onPhotoSpanConfigListener;
+    public void setOnImageTextEditorEventListener(OnImageTextEditorEventListener onImageTextEditorEventListener) {
+        this.onImageTextEditorEventListener = onImageTextEditorEventListener;
     }
 
     /**
      * 返回被点击的{@link PhotoSpan}的左下角坐标
      */
-    public interface OnPhotoSpanConfigListener {
+    public interface OnImageTextEditorEventListener {
 
         /**
          * {@link PhotoSpan.Config} 配置参数
          */
         void onPhotoSpanConfig(PhotoSpan.Config config);
+
+        /**
+         * {@link NotesSpan#onClick(View, int, int, IEditorSpan, boolean)}
+         */
+        void onNotesSpanClick(View view, IEditorSpan iEditorSpan);
     }
 }

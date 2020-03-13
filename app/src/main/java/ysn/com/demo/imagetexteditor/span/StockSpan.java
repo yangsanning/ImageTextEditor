@@ -43,13 +43,18 @@ public class StockSpan extends ClickableSpan implements IEditorSpan {
     }
 
     @Override
+    public int getShowTextLength() {
+        return TextUtils.isEmpty(showText) ? 0 : showText.length();
+    }
+
+    @Override
     public String getResult() {
         return result == null ? (result = getStartTag() + showText + getEndTag()) : result;
     }
 
     @Override
-    public int getShowTextLength() {
-        return TextUtils.isEmpty(showText) ? 0 : showText.length();
+    public void onClick(View view, int x, int y, IEditorSpan iEditorSpan, boolean isDown) {
+
     }
 
     @Override

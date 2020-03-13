@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
+import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editorEditView = findViewById(R.id.main_activity_editor_edit_text);
         notesView = findViewById(R.id.main_activity_editor_notes);
 
-        editorEditView.setOnPhotoSpanConfigListener(new ImageTextEditor.OnPhotoSpanConfigListener() {
+        editorEditView.setOnImageTextEditorEventListener(new ImageTextEditor.OnImageTextEditorEventListener() {
             @Override
             public void onPhotoSpanConfig(PhotoSpan.Config config) {
                 MainActivity.this.config = config;
@@ -61,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     notesView.setVisibility(View.GONE);
                 }
+            }
+
+            @Override
+            public void onNotesSpanClick(View view, IEditorSpan iEditorSpan) {
+                showMessage("点击了注释");
             }
         });
 
