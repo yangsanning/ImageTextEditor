@@ -3,9 +3,9 @@ package ysn.com.editor.imagetexteditor.utils;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
+import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 
 /**
  * @Author yangsanning
@@ -36,8 +36,13 @@ public class SpanUtils {
         return text.getSpans(start, end, IEditorSpan.class);
     }
 
-    public static PhotoSpan[] getCloseImageSpans(Editable text, int start, int end) {
+    public static PhotoSpan[] getPhotoSpans(Editable text, int start, int end) {
         return text.getSpans(start, end, PhotoSpan.class);
+    }
+
+    public static NotesSpan getNotesSpan(Editable text, int start) {
+        NotesSpan[] notesSpans = getNotesSpans(text, start, start + 2);
+        return notesSpans.length > 0 ? notesSpans[0] : null;
     }
 
     public static NotesSpan[] getNotesSpans(Editable text, int start, int end) {

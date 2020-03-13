@@ -103,9 +103,9 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
                     if (notesSpans.length > 0) {
                         // 如果是注解, 则往回移动
                         int spanStart = getSpanStart(text, notesSpans[0]);
-                        photoSpans = SpanUtils.getCloseImageSpans(text, spanStart - 2, spanStart);
+                        photoSpans = SpanUtils.getPhotoSpans(text, spanStart - 2, spanStart);
                     } else {
-                        photoSpans = SpanUtils.getCloseImageSpans(text, (selStart - 2), selStart);
+                        photoSpans = SpanUtils.getPhotoSpans(text, (selStart - 2), selStart);
                     }
                     if (photoSpans.length > 0) {
                         selectPhotoSpan(text, photoSpans[0]);
@@ -171,6 +171,11 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
         lastPhotoSpan = null;
         Editable text = getText();
         int spanEnd = getSpanEnd(text, photoSpan);
+        NotesSpan notesSpan = SpanUtils.getNotesSpan(text, spanEnd);
+        if (notesSpan != null) {
+            text.removeSpan(notesSpan);
+            text.replace(spanEnd, spanEnd + notesSpan.getShowTextLength() + 1, "");
+        }
         text.removeSpan(photoSpan);
         text.replace(spanEnd - photoSpan.getShowTextLength(), spanEnd, "");
         setText(text);
@@ -236,7 +241,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
         if (TextUtils.isEmpty(text)) {
             return;
         }
-        PhotoSpan[] photoSpans = SpanUtils.getCloseImageSpans(text, (selStart - 1), selStart);
+        PhotoSpan[] photoSpans = SpanUtils.getPhotoSpans(text, (selStart - 1), selStart);
         if (photoSpans.length > 0) {
             selectPhotoSpan(text, photoSpans[0]);
         } else {
@@ -391,8 +396,6 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
             style.insert(end, STRING_LINE_FEED);
             setText(style);
             setSelection(end + STRING_LINE_FEED.length());
-
-            setMovementMethod(ClickableMovementMethod.get());
         }
         return notesSpan;
     }
