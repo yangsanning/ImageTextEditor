@@ -20,7 +20,7 @@ import ysn.com.editor.imagetexteditor.utils.PaintUtils;
 /**
  * @Author yangsanning
  * @ClassName NotesSpan
- * @Description 注释 Span
+ * @Description 注释 Span, 结合{@link BaseCloseImageSpan} 使用, 如需单独使用请参考并自定义
  * @Date 2020/3/12
  * @History 2020/3/12 author: description:
  */

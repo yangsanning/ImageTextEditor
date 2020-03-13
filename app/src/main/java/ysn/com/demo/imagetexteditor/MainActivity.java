@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditorScrollView editorScrollView;
     private ImageTextEditor editorEditView;
     private View editorLayout;
-    private View anchorView;
+    private View notesView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +48,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editorScrollView = findViewById(R.id.main_activity_editor_scroll_view);
         editorLayout = findViewById(R.id.main_activity_editor_layout);
         editorEditView = findViewById(R.id.main_activity_editor_edit_text);
-        anchorView = findViewById(R.id.main_activity_editor_anchor);
+        notesView = findViewById(R.id.main_activity_editor_notes);
 
         editorEditView.setOnDrawablePointListener(new ImageTextEditor.OnCloseImageSpanConfigListener() {
             @Override
             public void onCloseImageSpanConfig(BaseCloseImageSpan.Config config) {
                 MainActivity.this.config = config;
                 if (config.isSelect) {
-                    int x = config.x + config.width / 2 - ViewUtils.getWidth(anchorView) / 2;
-                    int y = config.y - config.height - ViewUtils.getHeight(anchorView);
-                    ViewUtils.setLayout(anchorView, x, y);
-                    anchorView.setVisibility(View.VISIBLE);
+                    int x = config.x + config.width / 2 - ViewUtils.getWidth(notesView) / 2;
+                    int y = config.y - config.height - ViewUtils.getHeight(notesView);
+                    ViewUtils.setLayout(notesView, x, y);
+                    notesView.setVisibility(View.VISIBLE);
                 } else {
-                    anchorView.setVisibility(View.GONE);
+                    notesView.setVisibility(View.GONE);
                 }
             }
         });
@@ -69,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onScrollChanged(int newX, int newY, int oldX, int oldY) {
                 if (config != null && config.isSelect) {
-                    if (ViewUtils.isViewCovered(anchorView)) {
-                        int x = config.x + config.width / 2 - ViewUtils.getWidth(anchorView) / 2;
-                        int y = newY > oldY ? config.y : config.y - config.height - ViewUtils.getHeight(anchorView);
-                        ViewUtils.setLayout(anchorView, x, y);
+                    if (ViewUtils.isViewCovered(notesView)) {
+                        int x = config.x + config.width / 2 - ViewUtils.getWidth(notesView) / 2;
+                        int y = newY > oldY ? config.y : config.y - config.height - ViewUtils.getHeight(notesView);
+                        ViewUtils.setLayout(notesView, x, y);
                     }
                 }
             }
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.main_activity_preview).setOnClickListener(this);
         findViewById(R.id.main_activity_text).setOnClickListener(this);
-        findViewById(R.id.main_activity_jack_notes).setOnClickListener(this);
+        findViewById(R.id.main_activity_editor_notes).setOnClickListener(this);
         findViewById(R.id.main_activity_jack_photos).setOnClickListener(this);
 
         checkPermission();
@@ -131,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_activity_text:
                 editorEditView.addEditorSpan(new StockSpan(("润达医疗"), ("603108")));
                 break;
-            case R.id.main_activity_jack_notes:
-                editorEditView.addEditorSpan(new NotesSpan(("玉树临风风流倜傥英俊潇洒才高八斗貌似潘安号称一朵梨花压海棠人送绰号玉面小飞龙"),
+            case R.id.main_activity_editor_notes:
+                editorEditView.addNotes(new NotesSpan(("玉树临风风流倜傥英俊潇洒才高八斗貌似潘安号称一朵梨花压海棠人送绰号玉面小飞龙"),
                         getEditorWidth(), (int) editorEditView.getTextSize()));
                 break;
             case R.id.main_activity_preview:

@@ -5,6 +5,7 @@ import android.text.SpannableStringBuilder;
 
 import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
+import ysn.com.editor.imagetexteditor.span.NotesSpan;
 
 /**
  * @Author yangsanning
@@ -37,5 +38,9 @@ public class SpanUtils {
 
     public static BaseCloseImageSpan[] getCloseImageSpans(Editable text, int start, int end) {
         return text.getSpans(start, end, BaseCloseImageSpan.class);
+    }
+
+    public static NotesSpan[] getNotesSpans(Editable text, int start, int end) {
+        return text.getSpans(start, end, NotesSpan.class);
     }
 }

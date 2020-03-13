@@ -18,6 +18,7 @@ import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.span.BaseCloseImageSpan;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
+import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.editor.imagetexteditor.utils.LogUtils;
 import ysn.com.editor.imagetexteditor.utils.SpanUtils;
@@ -95,7 +96,16 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
             Editable text = getText();
             if (!TextUtils.isEmpty(text)) {
                 if (selStart == selEnd) {
-                    BaseCloseImageSpan[] closeImageSpans = SpanUtils.getCloseImageSpans(text, (selStart - 2), selStart);
+                    // 如果是图片, 则进行选中
+                    BaseCloseImageSpan[] closeImageSpans;
+                    NotesSpan[] notesSpans = SpanUtils.getNotesSpans(text, (selStart - 2), selStart);
+                    if (notesSpans.length > 0) {
+                        // 如果是注解, 则往回移动
+                        int spanStart = getSpanStart(text, notesSpans[0]);
+                        closeImageSpans = SpanUtils.getCloseImageSpans(text, spanStart - 2, spanStart);
+                    } else {
+                        closeImageSpans = SpanUtils.getCloseImageSpans(text, (selStart - 2), selStart);
+                    }
                     if (closeImageSpans.length > 0) {
                         selectImageSpan(text, closeImageSpans[0]);
                         hideSoftInput();
@@ -308,32 +318,6 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
     /****************************************************  公开方法  **********************************************/
 
     /**
-     * 添加图片 ImageSpan
-     * 注意: 这里有换行操作
-     */
-    public BaseCloseImageSpan addImage(BaseCloseImageSpan closeImageSpan) {
-        if (!hasFocus()) {
-            return null;
-        }
-        if (closeImageSpan != null) {
-            closeImageSpan.setOnImageSpanEventListener(this);
-            SpannableStringBuilder style = getStyle();
-            boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
-            style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
-            int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
-            int end = start + closeImageSpan.getShowTextLength();
-            style.insert(start, closeImageSpan.getShowText());
-            style.setSpan(closeImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            style.insert(end, STRING_LINE_FEED);
-            setText(style);
-            setSelection(end + 1);
-
-            setMovementMethod(ClickableMovementMethod.get());
-        }
-        return closeImageSpan;
-    }
-
-    /**
      * 添加自定义 Span
      *
      * @param editorSpan 实现了{@link IEditorSpan} 的Span
@@ -353,6 +337,53 @@ public class ImageTextEditor extends EditTextWithScrollView implements BaseClose
         style.setSpan(editorSpan, selStart, selEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         setText(style);
         setSelection(selEnd);
+    }
+
+    /**
+     * 添加图片 ImageSpan
+     * 注意: 这里可能有换行操作
+     */
+    public BaseCloseImageSpan addImage(BaseCloseImageSpan closeImageSpan) {
+        if (!hasFocus()) {
+            return null;
+        }
+        if (closeImageSpan != null) {
+            closeImageSpan.setOnImageSpanEventListener(this);
+            SpannableStringBuilder style = getStyle();
+            // 判断是否需要换行, 若已有行则不换
+            boolean isNeedLineFeed = selStart - 1 > 0 && !String.valueOf(style.charAt(selStart - 1)).equals(STRING_LINE_FEED);
+            style.insert(selStart, isNeedLineFeed ? STRING_LINE_FEED : "");
+            int start = selStart + (isNeedLineFeed ? STRING_LINE_FEED.length() : 0);
+            int end = start + closeImageSpan.getShowTextLength();
+            style.insert(start, closeImageSpan.getShowText());
+            style.setSpan(closeImageSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.insert(end, STRING_LINE_FEED);
+            setText(style);
+            setSelection(end + 1);
+
+            setMovementMethod(ClickableMovementMethod.get());
+        }
+        return closeImageSpan;
+    }
+
+    /**
+     * 添加注释 {@link NotesSpan}
+     * 注意: 需要结合{@link BaseCloseImageSpan} 使用, 如需单独使用请参考并自定义
+     */
+    public NotesSpan addNotes(NotesSpan notesSpan) {
+        if (notesSpan != null) {
+            SpannableStringBuilder style = getStyle();
+            int start = selStart + STRING_LINE_FEED.length();
+            int end = start + notesSpan.getShowTextLength();
+            style.insert(start, notesSpan.getShowText());
+            style.setSpan(notesSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.insert(end, STRING_LINE_FEED);
+            setText(style);
+            setSelection(end + STRING_LINE_FEED.length());
+
+            setMovementMethod(ClickableMovementMethod.get());
+        }
+        return notesSpan;
     }
 
     /**
