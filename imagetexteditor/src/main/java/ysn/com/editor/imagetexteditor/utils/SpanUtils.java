@@ -28,6 +28,14 @@ public class SpanUtils {
         return builder.toString();
     }
 
+    public static int getSpanStart(Editable text, IEditorSpan span) {
+        return text.getSpanStart(span);
+    }
+
+    public static int getSpanEnd(Editable text, IEditorSpan span) {
+        return text.getSpanEnd(span);
+    }
+
     public static IEditorSpan[] getEditorSpans(Editable text) {
         return getEditorSpans(text, 0, text.length());
     }
@@ -40,11 +48,21 @@ public class SpanUtils {
         return text.getSpans(start, end, PhotoSpan.class);
     }
 
-    public static NotesSpan getNotesSpan(Editable text, int start) {
-        NotesSpan[] notesSpans = getNotesSpans(text, start, start + 2);
+    /**
+     * 根据图片的末标获取注释
+     *
+     * @param text         文本
+     * @param photoSpanEnd {@link PhotoSpan} 的 end index
+     * @return {@link NotesSpan}
+     */
+    public static NotesSpan getNotesSpan(Editable text, int photoSpanEnd) {
+        NotesSpan[] notesSpans = getNotesSpans(text, photoSpanEnd, photoSpanEnd + 2);
         return notesSpans.length > 0 ? notesSpans[0] : null;
     }
 
+    /**
+     * 获取注释
+     */
     public static NotesSpan[] getNotesSpans(Editable text, int start, int end) {
         return text.getSpans(start, end, NotesSpan.class);
     }

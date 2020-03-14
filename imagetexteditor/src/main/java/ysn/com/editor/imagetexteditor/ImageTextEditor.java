@@ -102,7 +102,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
                     NotesSpan[] notesSpans = SpanUtils.getNotesSpans(text, (selStart - 2), selStart);
                     if (notesSpans.length > 0) {
                         // 如果是注解, 则往回移动
-                        int spanStart = getSpanStart(text, notesSpans[0]);
+                        int spanStart = SpanUtils.getSpanStart(text, notesSpans[0]);
                         photoSpans = SpanUtils.getPhotoSpans(text, spanStart - 2, spanStart);
                     } else {
                         photoSpans = SpanUtils.getPhotoSpans(text, (selStart - 2), selStart);
@@ -121,7 +121,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
                         SpannableStringBuilder style = new SpannableStringBuilder(getText());
                         SpannableStringBuilder newStyle = new SpannableStringBuilder();
                         newStyle.append(style.subSequence(0, getText().getSpanStart(editorSpan)));
-                        newStyle.append(style.subSequence(getSpanEnd(text, editorSpan), getText().length()));
+                        newStyle.append(style.subSequence(SpanUtils.getSpanEnd(text, editorSpan), getText().length()));
                         setText(newStyle);
                         return true;
                     }
@@ -170,16 +170,16 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
     public void onClickDelete(final PhotoSpan photoSpan) {
         lastPhotoSpan = null;
         Editable text = getText();
-        int spanEnd = getSpanEnd(text, photoSpan);
-        NotesSpan notesSpan = SpanUtils.getNotesSpan(text, spanEnd);
+        int photoSpanEnd = SpanUtils.getSpanEnd(text, photoSpan);
+        NotesSpan notesSpan = SpanUtils.getNotesSpan(text, photoSpanEnd);
         if (notesSpan != null) {
             text.removeSpan(notesSpan);
-            text.replace(spanEnd, spanEnd + notesSpan.getShowTextLength() + 1, "");
+            text.replace(photoSpanEnd, photoSpanEnd + notesSpan.getShowTextLength() + 1, "");
         }
         text.removeSpan(photoSpan);
-        text.replace(spanEnd - photoSpan.getShowTextLength(), spanEnd, "");
+        text.replace(photoSpanEnd - photoSpan.getShowTextLength(), photoSpanEnd, "");
         setText(text);
-        setSelection(Math.min(spanEnd, text.length()));
+        setSelection(Math.min(photoSpanEnd, text.length()));
         if (onImageTextEditorEventListener != null) {
             onImageTextEditorEventListener.onPhotoDelete();
         }
@@ -213,8 +213,8 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
     private boolean delaEditorSpanSelection(Editable text) {
         IEditorSpan[] editorSpans = SpanUtils.getEditorSpans(text);
         for (IEditorSpan editorSpan : editorSpans) {
-            int spanStart = getSpanStart(text, editorSpan);
-            int spanEnd = getSpanEnd(text, editorSpan);
+            int spanStart = SpanUtils.getSpanStart(text, editorSpan);
+            int spanEnd = SpanUtils.getSpanEnd(text, editorSpan);
 
             if (selStart == selEnd) {
                 if (selStart > spanStart && selStart < spanEnd) {
@@ -315,14 +315,6 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
 
     private SpannableStringBuilder getStyle() {
         return new SpannableStringBuilder(getText());
-    }
-
-    private int getSpanStart(Editable text, IEditorSpan span) {
-        return text.getSpanStart(span);
-    }
-
-    private int getSpanEnd(Editable text, IEditorSpan span) {
-        return text.getSpanEnd(span);
     }
 
     private boolean bFalse() {
