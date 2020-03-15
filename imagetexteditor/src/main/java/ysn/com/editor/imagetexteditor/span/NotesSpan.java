@@ -27,6 +27,15 @@ import ysn.com.editor.imagetexteditor.utils.PaintUtils;
  */
 public class NotesSpan extends ImageSpan implements IEditorSpan {
 
+    /**
+     * width 宽
+     * textColor 文字颜色
+     * textSize 文字大小
+     * marginTop 上边距
+     * marginBottom 下边距
+     * height 高
+     * lineHeight 行高
+     */
     private int width;
     private int marginTop;
     private int marginBottom;
@@ -41,15 +50,15 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
 
     private OnNotesSpanClickListener onNotesSpanClickListener;
 
-    public NotesSpan(String notes, int width, int textSize) {
-        this(notes, width, Color.parseColor("#999999"), textSize);
-    }
-
-    public NotesSpan(String notes, int width, int textColor, int textSize) {
-        this(notes, width, textColor, textSize, 0, 22);
-    }
-
-    public NotesSpan(String notes, int width, int textColor, int textSize, int marginTop, int marginBottom) {
+    /**
+     * @param notes        注释
+     * @param width        宽
+     * @param textColor    文字颜色
+     * @param textSize     文字大小
+     * @param marginTop    上边距
+     * @param marginBottom 下边距
+     */
+    public NotesSpan(String notes, int width, int textColor, float textSize, int marginTop, int marginBottom) {
         super((Drawable) null);
         this.width = width;
         this.marginTop = marginTop;
@@ -67,7 +76,7 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
     /**
      * 初始化画笔
      */
-    private void initTextPaint(int textColor, int textSize) {
+    private void initTextPaint(int textColor, float textSize) {
         textPaint = new TextPaint();
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);

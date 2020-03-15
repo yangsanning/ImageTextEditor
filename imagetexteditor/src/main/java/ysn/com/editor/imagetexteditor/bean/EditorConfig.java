@@ -11,6 +11,8 @@ import android.support.annotation.DrawableRes;
  */
 public class EditorConfig {
 
+    /************************ {@link ysn.com.editor.imagetexteditor.span.PhotoSpan} 相关 **********/
+
     /**
      * {@link ysn.com.editor.imagetexteditor.span.PhotoSpan} 的宽
      */
@@ -36,9 +38,36 @@ public class EditorConfig {
      */
     public int deleteIconMarginTop;
 
-
     /**
      * {@link ysn.com.editor.imagetexteditor.span.PhotoSpan} 删除按钮的右边距
      */
     public int deleteIconMarginRight;
+
+
+    /************************ {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 相关 **********/
+
+    /**
+     * {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 的宽
+     */
+    public int notesSpanWidth;
+
+    /**
+     * {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 的文字颜色
+     */
+    public int notesSpanTextColor;
+
+    /**
+     * {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 的文字大小
+     */
+    public float notesSpanTextSize;
+
+    /**
+     * {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 的上边距
+     */
+    public int notesSpanMarginTop;
+
+    /**
+     * {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 的下边距
+     */
+    public int notesSpanMarginBottom;
 }

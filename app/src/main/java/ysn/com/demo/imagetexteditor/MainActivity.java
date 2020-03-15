@@ -3,6 +3,7 @@ package ysn.com.demo.imagetexteditor;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -19,7 +20,6 @@ import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
 import ysn.com.editor.imagetexteditor.JackEditor;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
-import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 import ysn.com.jackphotos.JackPhotos;
@@ -48,9 +48,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         notesView = findViewById(R.id.main_activity_editor_notes);
 
         // 初始化编辑器相关参数
+        int editorWidth = getEditorWidth();
         JackEditor.get().bindEditor(editorEditView)
-                .setPhotoSpanWidth(getEditorWidth())
-                .setDeleteDrawable(R.drawable.ic_delete, 60, 60, 40, 40);
+                .setPhotoSpanWidth(editorWidth)
+                .setDeleteDrawable(R.drawable.ic_delete, 60, 60, 40, 40)
+                .setNotesSpanWidth(editorWidth)
+                .setNotesSpanTextColor(Color.parseColor("#999999"))
+                .setNotesSpanTextSize(editorEditView.getTextSize())
+                .setNotesSpanMarginTop(0)
+                .setNotesSpanMarginBottom(40);
 
         editorEditView.setOnImageTextEditorEventListener(new ImageTextEditor.OnImageTextEditorEventListener() {
             @Override
@@ -145,8 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 editorEditView.addEditorSpan(new StockSpan(("润达医疗"), ("603108")));
                 break;
             case R.id.main_activity_editor_notes:
-                editorEditView.addNotes(new NotesSpan(("玉树临风风流倜傥英俊潇洒才高八斗貌似潘安号称一朵梨花压海棠人送绰号玉面小飞龙"),
-                        getEditorWidth(), (int) editorEditView.getTextSize()));
+                JackEditor.get().addNotes("玉树临风风流倜傥英俊潇洒才高八斗貌似潘安号称一朵梨花压海棠人送绰号玉面小飞龙");
                 break;
             case R.id.main_activity_preview:
                 String data = editorEditView.getEditTexts();
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (photoPathList == null || photoPathList.isEmpty()) {
                 return;
             }
-            JackEditor.get().addPhotoSpan(photoPathList.get(0));
+            JackEditor.get().addPhoto(photoPathList.get(0));
         }
     }
 

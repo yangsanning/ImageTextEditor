@@ -337,7 +337,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
             return;
         }
         if (editorSpan instanceof PhotoSpan) {
-            addImage((PhotoSpan) editorSpan);
+            addPhoto((PhotoSpan) editorSpan);
             return;
         }
         int selEnd = selStart + editorSpan.getShowTextLength();
@@ -353,7 +353,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
      * 添加图片 ImageSpan
      * 注意: 这里可能有换行操作
      */
-    public PhotoSpan addImage(PhotoSpan photoSpan) {
+    public PhotoSpan addPhoto(PhotoSpan photoSpan) {
         if (!hasFocus()) {
             return null;
         }
