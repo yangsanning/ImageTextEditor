@@ -45,15 +45,6 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
 
     /**
      * @param drawable
-     * @param deleteIconBitmap 删除按钮 Bitmap
-     * @param imagePath       图片路径
-     */
-    public PhotoSpan(@NonNull Drawable drawable, String imagePath, Bitmap deleteIconBitmap) {
-        this(drawable, imagePath, deleteIconBitmap, 40, 40);
-    }
-
-    /**
-     * @param drawable
      * @param imagePath            图片路径
      * @param deleteIconBitmap      删除按钮 Bitmap
      * @param deleteIconMarginTop   删除按钮上边距

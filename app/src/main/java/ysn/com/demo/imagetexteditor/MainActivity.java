@@ -3,9 +3,6 @@ package ysn.com.demo.imagetexteditor;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,11 +17,11 @@ import java.util.ArrayList;
 
 import ysn.com.demo.imagetexteditor.span.StockSpan;
 import ysn.com.editor.imagetexteditor.ImageTextEditor;
+import ysn.com.editor.imagetexteditor.JackEditor;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.span.PhotoSpan;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
-import ysn.com.editor.imagetexteditor.utils.ImageUtils;
 import ysn.com.jackphotos.JackPhotos;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -49,6 +46,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editorLayout = findViewById(R.id.main_activity_editor_layout);
         editorEditView = findViewById(R.id.main_activity_editor_edit_text);
         notesView = findViewById(R.id.main_activity_editor_notes);
+
+        // 初始化编辑器相关参数
+        JackEditor.get().bindEditor(editorEditView)
+                .setPhotoSpanWidth(getEditorWidth())
+                .setDeleteDrawable(R.drawable.ic_delete, 60, 60, 40, 40);
 
         editorEditView.setOnImageTextEditorEventListener(new ImageTextEditor.OnImageTextEditorEventListener() {
             @Override
@@ -169,13 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (photoPathList == null || photoPathList.isEmpty()) {
                 return;
             }
-            String imagePath = photoPathList.get(0);
-            Bitmap bitmap = ImageUtils.getBitmap(imagePath);
-            bitmap = ImageUtils.zoom(bitmap, getEditorWidth());
-            Drawable drawable = new BitmapDrawable(bitmap);
-            drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
-            Bitmap deleteIconBitmap = ImageUtils.drawableToBitmap(getResources().getDrawable(R.drawable.ic_delete), 60, 60);
-            editorEditView.addImage(new PhotoSpan(drawable, imagePath, deleteIconBitmap));
+            JackEditor.get().addPhotoSpan(photoPathList.get(0));
         }
     }
 
