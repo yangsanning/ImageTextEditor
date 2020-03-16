@@ -159,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showMessage("数据为空");
                     return;
                 }
-                Intent intent = new Intent(this, PreviewActivity.class);
-                intent.putExtra(PreviewActivity.EXTRA_TEXT, data);
+                Intent intent = new Intent(this, PreviewSpanActivity.class);
+                intent.putExtra(PreviewSpanActivity.EXTRA_TEXT, data);
                 startActivity(intent);
                 break;
             default:

@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PreviewActivity"/>
+        <activity android:name=".PreviewSpanActivity"/>
 
         <activity
             android:name="ysn.com.jackphotos.page.PhotosActivity"

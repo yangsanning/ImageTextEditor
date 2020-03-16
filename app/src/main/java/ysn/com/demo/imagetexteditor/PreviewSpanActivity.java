@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.widget.TextView;
 
-import ysn.com.editor.imagetexteditor.component.EditorHtmlTagHandler;
+import ysn.com.demo.imagetexteditor.component.PhotoTextParser;
 import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
 
 /**
@@ -16,19 +16,19 @@ import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
  * @Date 2020/3/5
  * @History 2020/3/5 author: description:
  */
-public class PreviewActivity extends AppCompatActivity {
+public class PreviewSpanActivity extends AppCompatActivity {
 
     public static final String EXTRA_TEXT = "EXTRA_TEXT";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preview);
+        setContentView(R.layout.activity_prview_span);
 
-        TextView textView = findViewById(R.id.preview_activity_text);
+        TextView textView = findViewById(R.id.preview_apan_activity_text);
 
         String text = getIntent().getStringExtra(EXTRA_TEXT);
         int imageWidth = DeviceUtils.getScreenWidth(this) - textView.getPaddingStart() - textView.getPaddingEnd();
-        textView.setText(Html.fromHtml(text, null, new EditorHtmlTagHandler(this, textView, imageWidth)));
+        textView.setText(Html.fromHtml(text, null, new PhotoTextParser(textView, imageWidth)));
     }
 }

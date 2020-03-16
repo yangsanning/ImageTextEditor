@@ -2,6 +2,8 @@ package ysn.com.editor.imagetexteditor.span;
 
 import android.view.View;
 
+import ysn.com.editor.imagetexteditor.component.EditorMovementMethod;
+
 /**
  * @Author yangsanning
  * @ClassName IEditSpan
@@ -53,7 +55,7 @@ public interface IEditorSpan {
      * @param x           x坐标
      * @param y           y坐标
      * @param iEditorSpan 编辑器Span需要继承的接口
-     * @param isDown      是否是down事件( {@link ysn.com.editor.imagetexteditor.component.ClickableMovementMethod} 仅回调down up 事件)
+     * @param isDown      是否是down事件( {@link EditorMovementMethod} 仅回调down up 事件)
      */
     void onClick(View view, int x, int y, IEditorSpan iEditorSpan, boolean isDown);
 }

@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.text.style.ImageSpan;
 import android.view.View;
 
+import ysn.com.editor.imagetexteditor.component.EditorMovementMethod;
+
 /**
  * @Author yangsanning
  * @ClassName PhotoSpan
@@ -130,7 +132,7 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
     }
 
     /**
-     * 提供给{@link ysn.com.editor.imagetexteditor.component.ClickableMovementMethod}使用的点击事件
+     * 提供给{@link EditorMovementMethod}使用的点击事件
      * 这里进行不同点击事件的回调处理
      */
     @Override

@@ -12,20 +12,20 @@ import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 
 /**
  * @Author yangsanning
- * @ClassName ClickableMovementMethod
- * @Description 为ImageSpans点击而生
+ * @ClassName EditorMovementMethod
+ * @Description 编辑器的 LinkMovementMethod, 赋予 IEditorSpan 点击事件
  * @Date 2020/2/25
  * @History 2020/2/25 author: description:
  */
-public class ClickableMovementMethod extends LinkMovementMethod {
+public class EditorMovementMethod extends LinkMovementMethod {
 
-    private static ClickableMovementMethod instance;
+    private static EditorMovementMethod instance;
 
-    public static ClickableMovementMethod get() {
+    public static EditorMovementMethod get() {
         if (instance == null) {
-            synchronized (ClickableMovementMethod.class) {
+            synchronized (EditorMovementMethod.class) {
                 if (instance == null) {
-                    instance = new ClickableMovementMethod();
+                    instance = new EditorMovementMethod();
                 }
             }
         }

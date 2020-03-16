@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import java.lang.reflect.Method;
 
-import ysn.com.editor.imagetexteditor.component.ClickableMovementMethod;
+import ysn.com.editor.imagetexteditor.component.EditorMovementMethod;
 import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
 import ysn.com.editor.imagetexteditor.span.IEditorSpan;
 import ysn.com.editor.imagetexteditor.span.NotesSpan;
@@ -371,7 +371,7 @@ public class ImageTextEditor extends EditTextWithScrollView implements PhotoSpan
             setText(style);
             setSelection(end + 1);
 
-            setMovementMethod(ClickableMovementMethod.get());
+            setMovementMethod(EditorMovementMethod.get());
         }
         return photoSpan;
     }
