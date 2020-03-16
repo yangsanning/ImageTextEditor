@@ -3,7 +3,6 @@ package ysn.com.editor.imagetexteditor.span;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.widget.TextView;
@@ -33,12 +32,11 @@ public class PreviewPhotoSpan extends ImageSpan {
 
     /**
      * @param textView         需要展示内容的 TextView, 用于刷新
-     * @param loadingDrawable  加载时的占位图
      * @param imageUrl         图片链接
      * @param imageTargetWidth 图片目标宽度,
      */
-    public PreviewPhotoSpan(TextView textView, @NonNull Drawable loadingDrawable, String imageUrl, int imageTargetWidth) {
-        super(loadingDrawable);
+    public PreviewPhotoSpan(TextView textView, String imageUrl, int imageTargetWidth) {
+        super((Bitmap) null);
         this.imageUrl = imageUrl;
         this.targetImageWidth = imageTargetWidth;
         this.textView = textView;

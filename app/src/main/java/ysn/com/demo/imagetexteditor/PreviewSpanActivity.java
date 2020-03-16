@@ -27,7 +27,7 @@ public class PreviewSpanActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.preview_apan_activity_text);
 
-        String text = getIntent().getStringExtra(EXTRA_TEXT);
+        String text = getIntent().getStringExtra(EXTRA_TEXT).replace("\n", "<br>");
         int imageWidth = DeviceUtils.getScreenWidth(this) - textView.getPaddingStart() - textView.getPaddingEnd();
         textView.setText(Html.fromHtml(text, null, new PhotoTextParser(textView, imageWidth)));
     }

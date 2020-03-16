@@ -7,7 +7,6 @@ import android.widget.TextView;
 import org.xml.sax.XMLReader;
 
 import ysn.com.editor.imagetexteditor.component.BasePhotoTextParser;
-import ysn.com.editor.imagetexteditor.component.LoadingDrawable;
 import ysn.com.editor.imagetexteditor.span.PreviewPhotoSpan;
 
 /**
@@ -43,9 +42,8 @@ public class PhotoTextParser extends BasePhotoTextParser {
 
         switch (tag) {
             case TAG_IMAGE:
-                String url = output.subSequence(startIndex, endIndex).toString();
-                LoadingDrawable loadingDrawable = new LoadingDrawable(imageWidth, 600);
-                PreviewPhotoSpan previewPhotoSpan = new PreviewPhotoSpan(textView, loadingDrawable, url, imageWidth);
+                String url = output.subSequence(startIndex, endIndex).toString().trim();
+                PreviewPhotoSpan previewPhotoSpan = new PreviewPhotoSpan(textView, url, imageWidth);
                 output.setSpan(previewPhotoSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             default:
