@@ -6,7 +6,9 @@ import android.widget.TextView;
 
 import org.xml.sax.XMLReader;
 
+import ysn.com.editor.imagetexteditor.JackEditor;
 import ysn.com.editor.imagetexteditor.component.BasePhotoTextParser;
+import ysn.com.editor.imagetexteditor.span.NotesSpan;
 import ysn.com.editor.imagetexteditor.span.PreviewPhotoSpan;
 
 /**
@@ -19,6 +21,7 @@ import ysn.com.editor.imagetexteditor.span.PreviewPhotoSpan;
 public class PhotoTextParser extends BasePhotoTextParser {
 
     private static final String TAG_IMAGE = "image";
+    private static final String TAG_NOTES = "notes";
 
     private TextView textView;
     private int imageWidth;
@@ -45,6 +48,11 @@ public class PhotoTextParser extends BasePhotoTextParser {
                 String url = output.subSequence(startIndex, endIndex).toString().trim();
                 PreviewPhotoSpan previewPhotoSpan = new PreviewPhotoSpan(textView, url, imageWidth);
                 output.setSpan(previewPhotoSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                break;
+            case TAG_NOTES:
+                String notes = output.subSequence(startIndex, endIndex).toString().trim();
+                NotesSpan notesSpan = JackEditor.get().getNotesSpan(notes);
+                output.setSpan(notesSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             default:
                 break;

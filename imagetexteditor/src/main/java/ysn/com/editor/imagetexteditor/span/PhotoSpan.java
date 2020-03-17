@@ -123,7 +123,7 @@ public class PhotoSpan extends ImageSpan implements IEditorSpan {
 
     @Override
     public int getShowTextLength() {
-        return showText.length();
+        return getShowText().length();
     }
 
     @Override

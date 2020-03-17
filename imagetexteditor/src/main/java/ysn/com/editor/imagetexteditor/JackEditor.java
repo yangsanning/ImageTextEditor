@@ -115,14 +115,26 @@ public class JackEditor {
     public PhotoSpan addPhoto(String imagePath, int photoSpanWidth) {
         checkEditorNotNull();
 
+        PhotoSpan photoSpan = getPhotoSpan(imagePath, photoSpanWidth);
+        return imageTextEditor.addPhoto(photoSpan);
+    }
+
+    /**
+     * 获取图片
+     *
+     * @param imagePath      图片路径
+     * @param photoSpanWidth 图片宽度
+     * @return {@link PhotoSpan}
+     */
+    public PhotoSpan getPhotoSpan(String imagePath, int photoSpanWidth) {
         Bitmap bitmap = ImageUtils.getBitmap(imagePath);
         bitmap = ImageUtils.zoom(bitmap, photoSpanWidth);
         Drawable drawable = new BitmapDrawable(bitmap);
         drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
         Bitmap deleteIconBitmap = ImageUtils.drawableToBitmap(context.getResources().getDrawable(editorConfig.deleteIconRes),
                 editorConfig.deleteIconWidth, editorConfig.deleteIconHeight);
-        return imageTextEditor.addPhoto(new PhotoSpan(drawable, imagePath,
-                deleteIconBitmap, editorConfig.deleteIconMarginTop, editorConfig.deleteIconMarginRight));
+        return new PhotoSpan(drawable, imagePath,
+                deleteIconBitmap, editorConfig.deleteIconMarginTop, editorConfig.deleteIconMarginRight);
     }
 
 
@@ -187,8 +199,18 @@ public class JackEditor {
     public NotesSpan addNotes(String notes) {
         checkEditorNotNull();
 
-        return imageTextEditor.addNotes(new NotesSpan(notes, editorConfig.notesSpanWidth,
+        return imageTextEditor.addNotes(getNotesSpan(notes));
+    }
+
+    /**
+     * 获取注释
+     *
+     * @param notes 注释
+     * @return {@link NotesSpan}
+     */
+    public NotesSpan getNotesSpan(String notes) {
+        return new NotesSpan(notes, editorConfig.notesSpanWidth,
                 editorConfig.notesSpanTextColor, editorConfig.notesSpanTextSize,
-                editorConfig.notesSpanMarginTop, editorConfig.notesSpanMarginBottom));
+                editorConfig.notesSpanMarginTop, editorConfig.notesSpanMarginBottom);
     }
 }

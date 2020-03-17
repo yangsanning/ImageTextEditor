@@ -36,6 +36,7 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
      * height 高
      * lineHeight 行高
      */
+    private String notes;
     private int width;
     private int marginTop;
     private int marginBottom;
@@ -60,6 +61,7 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
      */
     public NotesSpan(String notes, int width, int textColor, float textSize, int marginTop, int marginBottom) {
         super((Drawable) null);
+        this.notes = notes;
         this.width = width;
         this.marginTop = marginTop;
         this.marginBottom = marginBottom;
@@ -125,12 +127,12 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
 
     @Override
     public String getStartTag() {
-        return null;
+        return "<notes>";
     }
 
     @Override
     public String getEndTag() {
-        return null;
+        return "</notes>";
     }
 
     @Override
@@ -140,12 +142,12 @@ public class NotesSpan extends ImageSpan implements IEditorSpan {
 
     @Override
     public int getShowTextLength() {
-        return showText.length();
+        return getShowText().length();
     }
 
     @Override
     public String getResult() {
-        return null;
+        return getStartTag() + notes + getEndTag();
     }
 
     @Override
