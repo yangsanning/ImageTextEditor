@@ -1,14 +1,14 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.phototexteditor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import ysn.com.editor.imagetexteditor.bean.EditorConfig;
-import ysn.com.editor.imagetexteditor.span.NotesSpan;
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
-import ysn.com.editor.imagetexteditor.utils.ImageUtils;
+import ysn.com.editor.phototexteditor.bean.EditorConfig;
+import ysn.com.editor.phototexteditor.span.NotesSpan;
+import ysn.com.editor.phototexteditor.span.PhotoSpan;
+import ysn.com.editor.phototexteditor.utils.ImageUtils;
 
 /**
  * @Author yangsanning
@@ -64,7 +64,7 @@ public class JackEditor {
     }
 
 
-    /************************ {@link ysn.com.editor.imagetexteditor.span.PhotoSpan} 相关 **********/
+    /************************ {@link ysn.com.editor.phototexteditor.span.PhotoSpan} 相关 **********/
 
     /**
      * 设置图片的展示宽度
@@ -138,7 +138,7 @@ public class JackEditor {
     }
 
 
-    /************************ {@link ysn.com.editor.imagetexteditor.span.NotesSpan} 相关 **********/
+    /************************ {@link ysn.com.editor.phototexteditor.span.NotesSpan} 相关 **********/
 
     /**
      * 设置注释的展示宽度

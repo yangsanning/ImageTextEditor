@@ -25,7 +25,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.supportLibs
 
-    implementation project(':imagetexteditor')
+    implementation project(':PhotoTextEditor')
 
     // 图片选择器
     implementation 'com.github.yangsanning:JackPhotos:1.0.1'

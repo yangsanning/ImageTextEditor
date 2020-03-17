@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
-import ysn.com.editor.imagetexteditor.span.IEditorSpan;
+import ysn.com.editor.phototexteditor.span.IEditorSpan;
 
 /**
  * @Author yangsanning

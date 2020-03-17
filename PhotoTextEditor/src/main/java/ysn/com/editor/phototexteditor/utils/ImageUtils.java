@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.utils;
+package ysn.com.editor.phototexteditor.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

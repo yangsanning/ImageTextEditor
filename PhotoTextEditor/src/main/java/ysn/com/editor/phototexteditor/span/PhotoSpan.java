@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.span;
+package ysn.com.editor.phototexteditor.span;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import android.text.style.ImageSpan;
 import android.view.View;
 
-import ysn.com.editor.imagetexteditor.component.EditorMovementMethod;
+import ysn.com.editor.phototexteditor.component.EditorMovementMethod;
 
 /**
  * @Author yangsanning

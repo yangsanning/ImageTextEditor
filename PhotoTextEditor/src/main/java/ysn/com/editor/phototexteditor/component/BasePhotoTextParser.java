@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.component;
+package ysn.com.editor.phototexteditor.component;
 
 import android.text.Editable;
 import android.text.Html;

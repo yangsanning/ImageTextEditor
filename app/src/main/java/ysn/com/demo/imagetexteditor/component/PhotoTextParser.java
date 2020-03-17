@@ -6,10 +6,10 @@ import android.widget.TextView;
 
 import org.xml.sax.XMLReader;
 
-import ysn.com.editor.imagetexteditor.JackEditor;
-import ysn.com.editor.imagetexteditor.component.BasePhotoTextParser;
-import ysn.com.editor.imagetexteditor.span.NotesSpan;
-import ysn.com.editor.imagetexteditor.span.PreviewPhotoSpan;
+import ysn.com.editor.phototexteditor.JackEditor;
+import ysn.com.editor.phototexteditor.component.BasePhotoTextParser;
+import ysn.com.editor.phototexteditor.span.NotesSpan;
+import ysn.com.editor.phototexteditor.span.PreviewPhotoSpan;
 
 /**
  * @Author yangsanning

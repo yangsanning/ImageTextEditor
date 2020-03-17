@@ -17,11 +17,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ysn.com.demo.imagetexteditor.span.StockSpan;
-import ysn.com.editor.imagetexteditor.ImageTextEditor;
-import ysn.com.editor.imagetexteditor.JackEditor;
-import ysn.com.editor.imagetexteditor.span.IEditorSpan;
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
-import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
+import ysn.com.editor.phototexteditor.ImageTextEditor;
+import ysn.com.editor.phototexteditor.JackEditor;
+import ysn.com.editor.phototexteditor.span.IEditorSpan;
+import ysn.com.editor.phototexteditor.span.PhotoSpan;
+import ysn.com.editor.phototexteditor.utils.DeviceUtils;
 import ysn.com.jackphotos.JackPhotos;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

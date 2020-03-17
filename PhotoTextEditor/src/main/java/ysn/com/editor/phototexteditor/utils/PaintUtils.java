@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.utils;
+package ysn.com.editor.phototexteditor.utils;
 
 import android.graphics.Paint;
 import android.text.TextPaint;

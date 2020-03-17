@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.span;
+package ysn.com.editor.phototexteditor.span;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,7 +13,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.lang.reflect.Field;
 
-import ysn.com.editor.imagetexteditor.utils.ImageUtils;
+import ysn.com.editor.phototexteditor.utils.ImageUtils;
 
 /**
  * @Author yangsanning

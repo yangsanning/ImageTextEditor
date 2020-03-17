@@ -39,7 +39,7 @@
                 android:enabled="false"
                 android:hint="请输入标题" />
 
-            <ysn.com.editor.imagetexteditor.ImageTextEditor
+            <ysn.com.editor.phototexteditor.ImageTextEditor
                 android:id="@+id/main_activity_editor_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

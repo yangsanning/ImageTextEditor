@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor.utils;
+package ysn.com.editor.phototexteditor.utils;
 
 import android.app.Activity;
 import android.content.Context;

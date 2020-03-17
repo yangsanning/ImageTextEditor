@@ -1,4 +1,4 @@
-package ysn.com.editor.imagetexteditor;
+package ysn.com.editor.phototexteditor;
 
 import android.content.Context;
 import android.text.Editable;
@@ -14,14 +14,14 @@ import android.widget.EditText;
 
 import java.lang.reflect.Method;
 
-import ysn.com.editor.imagetexteditor.component.EditorMovementMethod;
-import ysn.com.editor.imagetexteditor.component.EditTextWithScrollView;
-import ysn.com.editor.imagetexteditor.span.IEditorSpan;
-import ysn.com.editor.imagetexteditor.span.NotesSpan;
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
-import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
-import ysn.com.editor.imagetexteditor.utils.LogUtils;
-import ysn.com.editor.imagetexteditor.utils.SpanUtils;
+import ysn.com.editor.phototexteditor.component.EditorMovementMethod;
+import ysn.com.editor.phototexteditor.component.EditTextWithScrollView;
+import ysn.com.editor.phototexteditor.span.IEditorSpan;
+import ysn.com.editor.phototexteditor.span.NotesSpan;
+import ysn.com.editor.phototexteditor.span.PhotoSpan;
+import ysn.com.editor.phototexteditor.utils.DeviceUtils;
+import ysn.com.editor.phototexteditor.utils.LogUtils;
+import ysn.com.editor.phototexteditor.utils.SpanUtils;
 
 /**
  * @Author yangsanning

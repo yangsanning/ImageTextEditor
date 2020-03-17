@@ -1,11 +1,11 @@
-package ysn.com.editor.imagetexteditor.utils;
+package ysn.com.editor.phototexteditor.utils;
 
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 
-import ysn.com.editor.imagetexteditor.span.IEditorSpan;
-import ysn.com.editor.imagetexteditor.span.NotesSpan;
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
+import ysn.com.editor.phototexteditor.span.IEditorSpan;
+import ysn.com.editor.phototexteditor.span.NotesSpan;
+import ysn.com.editor.phototexteditor.span.PhotoSpan;
 
 /**
  * @Author yangsanning

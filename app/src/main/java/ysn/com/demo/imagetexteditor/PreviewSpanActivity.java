@@ -7,7 +7,7 @@ import android.text.Html;
 import android.widget.TextView;
 
 import ysn.com.demo.imagetexteditor.component.PhotoTextParser;
-import ysn.com.editor.imagetexteditor.utils.DeviceUtils;
+import ysn.com.editor.phototexteditor.utils.DeviceUtils;
 
 /**
  * @Author yangsanning

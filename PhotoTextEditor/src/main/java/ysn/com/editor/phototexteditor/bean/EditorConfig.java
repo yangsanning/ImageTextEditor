@@ -1,10 +1,9 @@
-package ysn.com.editor.imagetexteditor.bean;
+package ysn.com.editor.phototexteditor.bean;
 
 import android.support.annotation.DrawableRes;
 
-import ysn.com.editor.imagetexteditor.span.NotesSpan;
-import ysn.com.editor.imagetexteditor.span.PhotoSpan;
-import ysn.com.editor.imagetexteditor.span.PreviewPhotoSpan;
+import ysn.com.editor.phototexteditor.span.NotesSpan;
+import ysn.com.editor.phototexteditor.span.PhotoSpan;
 
 /**
  * @Author yangsanning
