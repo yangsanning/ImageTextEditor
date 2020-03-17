@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 public class EditorScrollView extends NestedScrollView {
 
     private OnScrollChangedListener onScrollChangedListener;
+    private boolean isInit;
 
     public EditorScrollView(@NonNull Context context) {
         super(context);
@@ -27,6 +28,15 @@ public class EditorScrollView extends NestedScrollView {
 
     public EditorScrollView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        if (isInit) {
+            return;
+        }
+        isInit = Boolean.TRUE;
+        super.onSizeChanged(w, h, oldw, oldh);
     }
 
     @Override
@@ -45,8 +55,8 @@ public class EditorScrollView extends NestedScrollView {
     public interface OnScrollChangedListener {
 
         /**
-         * @param newX    变化后的X轴位置
-         * @param newY    变化后的Y轴的位置
+         * @param newX 变化后的X轴位置
+         * @param newY 变化后的Y轴的位置
          * @param oldX 原先的X轴的位置
          * @param oldY 原先的Y轴的位置
          */
